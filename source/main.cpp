@@ -1,7 +1,7 @@
-/*	Terrain Simulation
-*	Assignment 3 - CS 3GC3 McMaster University
+/*	Wizard-Tower Game
+*	Final project - CS 3GC3 McMaster University
 *	By Eric Amshukov 1133146 and Brandon Byskov 1068517
-*	November Friday 27th, 2014
+*	December 2014
 */
 
 #define WIN32_LEAN_AND_MEAN
@@ -11,13 +11,16 @@
 #include <time.h>
 #include <list>
 #include <vector>
-#include <glew.h>
-#include <freeglut.h>
+//#include <glew.h>
+//#include <freeglut.h>
 
 //brandon's includes:
-//#  include <GL/gl.h>
-//#  include <GL/glu.h>
-//#  include <GL/freeglut.h>
+#  include <GL/gl.h>
+#  include <GL/glu.h>
+#  include <GL/freeglut.h>
+
+#include "main.h"
+#include "character.h"
 
 
 using namespace std;
@@ -79,447 +82,448 @@ float skin[] = {0.96, 0.80, 0.69};
 float wood[] = {0.52, 0.37, 0.26};
 
 
-class Projectile
-{
-	int age;			//Life
-	float size;			//Size
-	float pos[3];		//Position
-	float dir[3];		//Direction
-	float vel[3];		//velocity
-	float colour[3];	//Colour
+//class Projectile
+//{
+//	int age;			//Life
+//	float size;			//Size
+//	float pos[3];		//Position
+//	float dir[3];		//Direction
+//	float vel[3];		//velocity
+//	float colour[3];	//Colour
+//
+//public:
+//
+//	Projectile(float _size, float *_colour, float * _pos, float * _dir)
+//	{
+//		  size = _size;		
+//		  for (int i = 0; i < 3; i++)
+//		  {
+//				colour[i] = _colour[i];
+//				size = _size;
+//				pos[i] = _pos[i];
+//				dir[i] = _dir[i];
+//				vel[i] = 1.01;		//initial speed
+//		  }
+//	}
+//
+//	void incrementAge()
+//	{
+//		age++;
+//	}
+//
+//	int getAge()
+//	{
+//		return age;
+//	}
+//	float getX()
+//	{
+//		return pos[0];
+//	}
+//
+//	float getY()
+//	{
+//		return pos[1];
+//	}
+//
+//	float getZ()
+//	{
+//		return pos[2];
+//	}
+//
+//	void move()
+//	{
+//		for (int i = 0; i < 3; i++)
+//		{
+//			pos[i] += dir[i] * vel[i];
+//		}
+//	}
+//	
+//	void draw()
+//	{
+//		glPushMatrix();
+//		glTranslatef(pos[0], pos[1], pos[2]);
+//		glColor3fv(colour);
+//		glutSolidSphere(0.6, 10, 10);
+//		glPopMatrix();
+//	}
+//};
 
-public:
-
-	Projectile(float _size, float *_colour, float * _pos, float * _dir)
-	{
-		  size = _size;		
-		  for (int i = 0; i < 3; i++)
-		  {
-				colour[i] = _colour[i];
-				size = _size;
-				pos[i] = _pos[i];
-				dir[i] = _dir[i];
-				vel[i] = 1.01;		//initial speed
-		  }
-	}
-
-	void incrementAge()
-	{
-		age++;
-	}
-
-	int getAge()
-	{
-		return age;
-	}
-	float getX()
-	{
-		return pos[0];
-	}
-
-	float getY()
-	{
-		return pos[1];
-	}
-
-	float getZ()
-	{
-		return pos[2];
-	}
-
-	void move()
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			pos[i] += dir[i] * vel[i];
-		}
-	}
-	
-	void draw()
-	{
-		glPushMatrix();
-		glTranslatef(pos[0], pos[1], pos[2]);
-		glColor3fv(colour);
-		glutSolidSphere(0.6, 10, 10);
-		glPopMatrix();
-	}
-};
-
-class Particle
-{
-	/* Particle states */
-	bool hasBounced;		
-	bool isFalling;
-
-	/* Age of particle (Incremented with each step of the animation) */
-	int age;
-	float rSpeed;
-
-	/* Physics characteristics */
-	float pos[3];	 //Position
-	float dir[3];	 //Direction
-	float rot[3];	 //Rotation
-	float normal[3]; //Normal vector
-
-	/* Random values generated for the direction, rotation and speed */
-	float dRandFactor[3];
-	float rRandFactor[3];
-
-	float colour[3];		//Colour of the particle
-	float oSpeed[3];		//Original particle speed
-	float speed[3];			//Particle speed
-
- 	float white[3];			//Colour white
-
-
-	
-	/* Sets the Normal vector of two coplanar vectors */
-	float * getNormal(float* v1[3], float* v2[3])
-	{
-		/*Cross product*/
-		normal[0] = (*v1[1]) * (*v2[2]) - (*v1[2]) * (*v2[1]);
-		normal[1] = (*v1[2]) * (*v2[0]) - (*v1[0]) * (*v2[2]);
-		normal[1] = (*v1[0]) * (*v2[1]) - (*v1[1]) * (*v2[0]);
-
-		/*Magnitude of the vector*/
-		float m = sqrt(normal[0]*normal[0] +
-					   normal[1]*normal[1] + 
-					   normal[2]*normal[2]);
-
-		/*Normalize the normal vector by dividing each component by magnitude*/
-		for (int i = 0; i < 3; i++)
-		{
-			normal[i] /= m;
-		}
-		
-		return normal;
-	}
-
-	public:
-		/* Constructor - Initializes a Particle with float position coordinates */
-		Particle(float* _pos)
-		{
-			hasBounced = false;
-			isFalling = true;
-			age = 0;	//Initialize the particle's life
-			rSpeed = 1;
-		
-			dRandFactor[0] = (float)((rand() % 100)/3);
-			dRandFactor[1] = (float)((rand() % 100));
-			dRandFactor[2] = (float)((rand() % 100)/3);
-
-			for (int i = 0; i < 3; i++)
-			{
-				rRandFactor[i] = (float)((rand() % 360));
-				speed[i] = 0.001f;		   //The higher the speed, the faster
-				oSpeed[i] = speed[i];
-				pos[i] = _pos[i];		
-				rot[i] = rRandFactor[i];
-				colour[i] = (float)(rand() % 100)/100;			//randomize particle colour
-				white[i] = 1.0;
-			}
-			oSpeed[1] = 0.01f;
-
-			dir[0] = 1.0f + dRandFactor[0];
-			dir[1] = -1.0f - dRandFactor[1];
-			dir[2] = 1.0f + dRandFactor[2];
-		}
-
-		/* Increments the age of the particle by one animation step */
-		void incrementAge()
-		{
-			age++;
-		}
-
-		void setBounceState(bool q)
-		{
-			hasBounced = q;
-		}
-
-		/* Modifies the direction coordinates of a particle */
-		void modDirection(float x, float y, float z)
-		{
-			dir[0] = x;
-			dir[1] = y;
-			dir[2] = z;
-		}
-
-		/* Modifies the position of a particle */
-		void modPosition()
-		{
-			/* Accelerate by a factor of gravity */
-			if (isFalling)
-			{
-				speed[1] *= gravity*0.95*360;
-			}
-
-			/* Decelerate by a factor of gravity */
-			else
-			{
-				/* Stop decelerating once the speed is below an extremely low amount */
-				if (speed[1] > 0.0005)
-				{
-					speed[1] /= gravity;
-				}
-
-				/* Change the direction once the particle has reached its max height */
-				else
-				{
-					dir[1] = -dir[1];
-					isFalling = true;
-				}
-			}
-
-			/* If a particle bounces off the ground, flip 'y' direction */
-			if (hasBounced)
-			{
-				dir[1] = -dir[1];
-				hasBounced = false;
-				isFalling = false;
-			
-				/* Reduce the speed of a particle when it bounces by a factor of 'friction' */
-				for (int i = 0; i < 3; i++)
-				{
-					speed[i] *= friction;
-				}
-			}
-
-			/* Finally, after modifying the direction and speed accordingly,
-				set the new position coordinates */
-			pos[0] += dir[0] * speed[0];
-			pos[1] += dir[1] * speed[1];
-			pos[2] += dir[2] * speed[2];
-
-		}
-
-		/* Increments the angle of a particle */
-		void rotate()
-		{
-			for (int i = 0; i < 3; i++)
-			{
-				
-				/* Reset angle back to 0 after a full cycle */
-				if (rot[i] >= 360)
-				{
-					rot[i] = 0;
-				}
-
-				/* Reduce rotation speed by a factor of friction */
-				rot[i] += rSpeed * friction;
-			}
-		}
+//class Particle
+//{
+//	/* Particle states */
+//	bool hasBounced;		
+//	bool isFalling;
+//
+//	/* Age of particle (Incremented with each step of the animation) */
+//	int age;
+//	float rSpeed;
+//
+//	/* Physics characteristics */
+//	float pos[3];	 //Position
+//	float dir[3];	 //Direction
+//	float rot[3];	 //Rotation
+//	float normal[3]; //Normal vector
+//
+//	/* Random values generated for the direction, rotation and speed */
+//	float dRandFactor[3];
+//	float rRandFactor[3];
+//
+//	float colour[3];		//Colour of the particle
+//	float oSpeed[3];		//Original particle speed
+//	float speed[3];			//Particle speed
+//
+// 	float white[3];			//Colour white
+//
+//
+//	
+//	/* Sets the Normal vector of two coplanar vectors */
+//	float * getNormal(float* v1[3], float* v2[3])
+//	{
+//		/*Cross product*/
+//		normal[0] = (*v1[1]) * (*v2[2]) - (*v1[2]) * (*v2[1]);
+//		normal[1] = (*v1[2]) * (*v2[0]) - (*v1[0]) * (*v2[2]);
+//		normal[1] = (*v1[0]) * (*v2[1]) - (*v1[1]) * (*v2[0]);
+//
+//		/*Magnitude of the vector*/
+//		float m = sqrt(normal[0]*normal[0] +
+//					   normal[1]*normal[1] + 
+//					   normal[2]*normal[2]);
+//
+//		/*Normalize the normal vector by dividing each component by magnitude*/
+//		for (int i = 0; i < 3; i++)
+//		{
+//			normal[i] /= m;
+//		}
+//		
+//		return normal;
+//	}
+//
+//	public:
+//		/* Constructor - Initializes a Particle with float position coordinates */
+//		Particle(float* _pos)
+//		{
+//			hasBounced = false;
+//			isFalling = true;
+//			age = 0;	//Initialize the particle's life
+//			rSpeed = 1;
+//		
+//			dRandFactor[0] = (float)((rand() % 100)/3);
+//			dRandFactor[1] = (float)((rand() % 100));
+//			dRandFactor[2] = (float)((rand() % 100)/3);
+//
+//			for (int i = 0; i < 3; i++)
+//			{
+//				rRandFactor[i] = (float)((rand() % 360));
+//				speed[i] = 0.001f;		   //The higher the speed, the faster
+//				oSpeed[i] = speed[i];
+//				pos[i] = _pos[i];		
+//				rot[i] = rRandFactor[i];
+//				colour[i] = (float)(rand() % 100)/100;			//randomize particle colour
+//				white[i] = 1.0;
+//			}
+//			oSpeed[1] = 0.01f;
+//
+//			dir[0] = 1.0f + dRandFactor[0];
+//			dir[1] = -1.0f - dRandFactor[1];
+//			dir[2] = 1.0f + dRandFactor[2];
+//		}
+//
+//		/* Increments the age of the particle by one animation step */
+//		void incrementAge()
+//		{
+//			age++;
+//		}
+//
+//		void setBounceState(bool q)
+//		{
+//			hasBounced = q;
+//		}
+//
+//		/* Modifies the direction coordinates of a particle */
+//		void modDirection(float x, float y, float z)
+//		{
+//			dir[0] = x;
+//			dir[1] = y;
+//			dir[2] = z;
+//		}
+//
+//		/* Modifies the position of a particle */
+//		void modPosition();
+//		{
+//			/* Accelerate by a factor of gravity */
+//			if (isFalling)
+//			{
+//				speed[1] *= gravity*0.95*360;
+//			}
+//
+//			/* Decelerate by a factor of gravity */
+//			else
+//			{
+//				/* Stop decelerating once the speed is below an extremely low amount */
+//				if (speed[1] > 0.0005)
+//				{
+//					speed[1] /= gravity;
+//				}
+//
+//				/* Change the direction once the particle has reached its max height */
+//				else
+//				{
+//					dir[1] = -dir[1];
+//					isFalling = true;
+//				}
+//			}
+//
+//			/* If a particle bounces off the ground, flip 'y' direction */
+//			if (hasBounced)
+//			{
+//				dir[1] = -dir[1];
+//				hasBounced = false;
+//				isFalling = false;
+//			
+//				/* Reduce the speed of a particle when it bounces by a factor of 'friction' */
+//				for (int i = 0; i < 3; i++)
+//				{
+//					speed[i] *= friction;
+//				}
+//			}
+//
+//			/* Finally, after modifying the direction and speed accordingly,
+//				set the new position coordinates */
+//			pos[0] += dir[0] * speed[0];
+//			pos[1] += dir[1] * speed[1];
+//			pos[2] += dir[2] * speed[2];
+//
+//		}
+//
+//		/* Increments the angle of a particle */
+//		void rotate()
+//		{
+//			for (int i = 0; i < 3; i++)
+//			{
+//				
+//				/* Reset angle back to 0 after a full cycle */
+//				if (rot[i] >= 360)
+//				{
+//					rot[i] = 0;
+//				}
+//
+//				/* Reduce rotation speed by a factor of friction */
+//				rot[i] += rSpeed * friction;
+//			}
+//		}
+//
+//
+//		int getAge()
+//		{
+//			return age;
+//		}
+//
+//		/* Returns whether the particle is falling or not */
+//		bool getFallingState()
+//		{
+//			return isFalling;
+//		}
+//		
+//		/* Returns whether the particle has bounced or not */
+//		bool getBounceState()
+//		{
+//			return hasBounced;
+//		}
+//
+//		/* Returns the position coordinates of a particle */
+//		float * getPosition()
+//		{
+//			return pos;
+//		}
+//		
+//		float * getDirection()
+//		{
+//			return dir;
+//		}
+//
+//		/* Draws a particle in a hierarchical fashion */
+//		void draw()
+//		{
+//			glMaterialfv(GL_FRONT, GL_AMBIENT, colour);
+//			glMaterialfv(GL_FRONT, GL_DIFFUSE, colour);
+//			glMaterialfv(GL_FRONT, GL_SPECULAR, colour);
+//			glMaterialfv(GL_FRONT, GL_SHININESS, white);
+//		
+//			glPushMatrix();
+//			glTranslatef(pos[0], pos[1], pos[2]);
+//			glRotatef(rot[0], rot[0], rot[1], rot[2]);
+//			glColor3fv(colour);
+//			glutSolidCube(0.08);
+//			glPopMatrix();
+//		}
+//};
 
 
-		int getAge()
-		{
-			return age;
-		}
-
-		/* Returns whether the particle is falling or not */
-		bool getFallingState()
-		{
-			return isFalling;
-		}
-		
-		/* Returns whether the particle has bounced or not */
-		bool getBounceState()
-		{
-			return hasBounced;
-		}
-
-		/* Returns the position coordinates of a particle */
-		float * getPosition()
-		{
-			return pos;
-		}
-		
-		float * getDirection()
-		{
-			return dir;
-		}
-
-		/* Draws a particle in a hierarchical fashion */
-		void draw()
-		{
-			glMaterialfv(GL_FRONT, GL_AMBIENT, colour);
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, colour);
-			glMaterialfv(GL_FRONT, GL_SPECULAR, colour);
-			glMaterialfv(GL_FRONT, GL_SHININESS, white);
-		
-			glPushMatrix();
-			glTranslatef(pos[0], pos[1], pos[2]);
-			glRotatef(rot[0], rot[0], rot[1], rot[2]);
-			glColor3fv(colour);
-			glutSolidCube(0.08);
-			glPopMatrix();
-		}
-};
-
-class Character
-{
-protected:
-	int lifePoints;			//Life points of Character
-
-	int spellInterval;		//# of Spells per period
-	int spellIntervalCount;
-
-	int particleInterval;	//# of Particles per period
-	int particleIntervalCount;
-
-	float size;				//Size of character model
-	float pos[3];			//Position
-
-	vector<Projectile> spell;
-	vector<Particle> particle;
-
-	/* Create projectile at particular origin aimed at a direction */
-	Projectile createProjectile(float * _dir)
-	{
-		Projectile p(size, red, pos, _dir);
-		return p;
-	}
-
-	/* Create a particle at particular origin coordinates */
-	Particle createParticle(float* o)
-	{
-		float pOrigin[3];
-	
-		pOrigin[0] = o[0]+1.7;
-		pOrigin[1] = o[1]+3;	//5 units higher than origin
-		pOrigin[2] = o[2]+1.7;
-
-		Particle p(pOrigin);
-		return p;
-	}
-
-	/* Update spell parameters */
-	void updateSpells()
-	{
-		for (size_t i = 0; i < spell.size(); i++)
-		{
-			/* Increment age */
-			spell[i].incrementAge();
-
-			/* Increment the particle's position and rotate */
-			spell[i].move();
-
-			/* Delete particle if it is over the max age */
-			if (spell[i].getAge() > gMaxSpellAge)
-			{
-				spell.erase(spell.begin() + i);
-			}
-		}
-	}
-			
-	/* Update particle parameters */
-	void updateParticles()
-	{
-		for (size_t i = 0; i < particle.size(); i++)
-		{
-			/* Increment age */
-			particle[i].incrementAge();
-			/* Increment the particle's position and rotate */
-			particle[i].modPosition();
-			particle[i].rotate();
-
-			/* Delete particle if it is over the max age */
-			if (particle[i].getAge() > gMaxParticleAge)
-			{
-				particle.pop_back();
-			}
-		}
-	}
-
-	/* Draws all visible spells */
-	void drawSpells()
-	{
-		for (size_t i = 0; i < spell.size(); i++)
-		{
-			/* Draw each spell projectile */
-			spell[i].draw();
-		}
-	}
-	
-	/* Draws all particles */
-	void drawParticles()
-	{
-		particleIntervalCount++;
-		if (particleIntervalCount % particleInterval == 0)
-		{
-			/* Insert a new Particle at the back of the Particle vector list */
-			particle.push_back(createParticle(pos));
-			particleIntervalCount = 1;
-		}
-		for (size_t i = 0; i < particle.size(); i++)
-		{
-			/* Draw each particle */
-			particle[i].draw();
-		}
-	}
-
-	/* Draws the character model figure */
-	virtual void drawFigure() = 0;
-
-public:
-
-	Character (float * _pos, float _size)
-	{
-		lifePoints = 3;
-		size = _size;
-
-		particleIntervalCount = 0;
-		particleInterval = 10;
-
-		spellIntervalCount = 0;
-		spellInterval = 10;
-				
-		for (int i = 0; i < 3; i++)
-		{
-			pos[i] = _pos[i];
-		}
-	}
-
-	/* Returns the position coordinates of a character */
-	float * getPos()
-	{
-		return pos;
-	}
-
-	/* Returns X coordinate of player */
-	float getX()
-	{
-		return pos[0];
-	}
-
-	/* Returns Y coordinate of player */
-	float getY()
-	{
-		return pos[1];
-	}
-
-	/* Returns Z coordinate of player */
-	float getZ()
-	{
-		return pos[2];
-	}
-
-	/* Returns size of Character Model */
-	float getSize()
-	{
-		return size;
-	}
-
-	/* Updates movement, spells, particle parameters...ect. */
-	virtual void update() = 0;
-
-	/* Draw's character model, spells, particles */
-	void draw()
-	{
-		drawFigure();
-		drawParticles();
-		drawSpells();
-	}
-};
+//class Character
+//{
+//protected:
+//	int lifePoints;			//Life points of Character
+//
+//	int spellInterval;		//# of Spells per period
+//	int spellIntervalCount;
+//
+//	int particleInterval;	//# of Particles per period
+//	int particleIntervalCount;
+//
+//	float size;				//Size of character model
+//	float pos[3];			//Position
+//
+//	vector<Projectile> spell;
+//	vector<Particle> particle;
+//
+//	/* Create projectile at particular origin aimed at a direction */
+//	Projectile createProjectile(float * _dir)
+//	{
+//		Projectile p(size, red, pos, _dir);
+//		return p;
+//	}
+//
+//	/* Create a particle at particular origin coordinates */
+//	Particle createParticle(float* o)
+//	{
+//		float pOrigin[3];
+//	
+//		pOrigin[0] = o[0]+1.7;
+//		pOrigin[1] = o[1]+3;	//5 units higher than origin
+//		pOrigin[2] = o[2]+1.7;
+//
+//		Particle p(pOrigin);
+//		return p;
+//	}
+//
+//	/* Update spell parameters */
+//	void updateSpells()
+//	{
+//		for (size_t i = 0; i < spell.size(); i++)
+//		{
+//			/* Increment age */
+//			spell[i].incrementAge();
+//
+//			/* Increment the particle's position and rotate */
+//			spell[i].move();
+//
+//			/* Delete particle if it is over the max age */
+//			if (spell[i].getAge() > gMaxSpellAge)
+//			{
+//				spell.erase(spell.begin() + i);
+//			}
+//		}
+//	}
+//			
+//	/* Update particle parameters */
+//	void updateParticles()
+//	{
+//		for (size_t i = 0; i < particle.size(); i++)
+//		{
+//			/* Increment age */
+//			particle[i].incrementAge();
+//			/* Increment the particle's position and rotate */
+//			particle[i].modPosition();
+//			particle[i].rotate();
+//
+//			/* Delete particle if it is over the max age */
+//			if (particle[i].getAge() > gMaxParticleAge)
+//			{
+//				particle.pop_back();
+//			}
+//		}
+//	}
+//
+//	/* Draws all visible spells */
+//	void drawSpells()
+//	{
+//		for (size_t i = 0; i < spell.size(); i++)
+//		{
+//			/* Draw each spell projectile */
+//			spell[i].draw();
+//		}
+//	}
+//	
+//	/* Draws all particles */
+//	void drawParticles()
+//	{
+//		particleIntervalCount++;
+//		if (particleIntervalCount % particleInterval == 0)
+//		{
+//			/* Insert a new Particle at the back of the Particle vector list */
+//			particle.push_back(createParticle(pos));
+//			particleIntervalCount = 1;
+//		}
+//		for (size_t i = 0; i < particle.size(); i++)
+//		{
+//			/* Draw each particle */
+//			particle[i].draw();
+//		}
+//	}
+//
+//	/* Draws the character model figure */
+//	virtual void drawFigure() = 0;
+//
+//public:
+//
+//	Character (float * _pos, float _size)
+//	{
+//		lifePoints = 3;
+//		size = _size;
+//
+//		particleIntervalCount = 0;
+//		particleInterval = 10;
+//
+//		spellIntervalCount = 0;
+//		spellInterval = 10;
+//				
+//		for (int i = 0; i < 3; i++)
+//		{
+//			pos[i] = _pos[i];
+//		}
+//	}
+//
+//	/* Returns the position coordinates of a character */
+//	float * getPos()
+//	{
+//		return pos;
+//	}
+//
+//	/* Returns X coordinate of player */
+//	float getX()
+//	{
+//		return pos[0];
+//	}
+//
+//	/* Returns Y coordinate of player */
+//	float getY()
+//	{
+//		return pos[1];
+//	}
+//
+//	/* Returns Z coordinate of player */
+//	float getZ()
+//	{
+//		return pos[2];
+//	}
+//
+//	/* Returns size of Character Model */
+//	float getSize()
+//	{
+//		return size;
+//	}
+//
+//	/* Updates movement, spells, particle parameters...ect. */
+//	virtual void update() = 0;
+//
+//	/* Draw's character model, spells, particles */
+//	void draw()
+//	{
+//		drawFigure();
+//		drawParticles();
+//		drawSpells();
+//	}
+//};
 
 class Enemy : public Character
 {

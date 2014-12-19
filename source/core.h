@@ -9,6 +9,7 @@
 #ifndef CORE_H
 #define CORE_H
 
+//#include "character.h"
 
 class Core {
 public:
