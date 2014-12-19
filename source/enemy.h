@@ -1,7 +1,17 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-class Enemy {
+#include "character.h"
+
+class Enemy : public Character {
+public:
+	Enemy(float* _o, float _size);
+	~Enemy();
+
+	void update();
+
+private:
+	void drawFigure();
 
 };
 
