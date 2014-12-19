@@ -13,6 +13,7 @@ void Enemy::update()
 {
 	updateParticles();
 	updateSpells();
+	updateDamage();
 }
 
 void Enemy::drawFigure()
@@ -23,8 +24,16 @@ void Enemy::drawFigure()
 	glMaterialfv(GL_FRONT, GL_SPECULAR, blue);
 	glMaterialfv(GL_FRONT, GL_SHININESS, white);
 
+	if (takingDamage)
+	{
+		glColor3fv(red);
+	}
 	glPushMatrix();
 	glTranslatef(pos[0]+2, pos[1]+2, pos[2]+2);
+	if (!takingDamage)
+	{
+		glColor3fv(purple);
+	}
 	glRotatef(-90,1,0,0);
 	glRotatef(-90,0,0,1);
 	glutSolidCylinder(size, size*2, 10, 10);
@@ -34,7 +43,10 @@ void Enemy::drawFigure()
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, skin);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, skin);
 		glMaterialfv(GL_FRONT, GL_SHININESS, skin);
-		glColor3fv(skin);
+		if (!takingDamage)
+		{
+			glColor3fv(skin);
+		}
 		glPushMatrix();
 		glTranslatef(0.0, 0.0, size*2);
 		glutSolidSphere(size, 10, 10);
@@ -44,7 +56,10 @@ void Enemy::drawFigure()
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, blue);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, black);
 			glMaterialfv(GL_FRONT, GL_SHININESS, white);
-			glColor3fv(purple);
+			if (!takingDamage)
+			{
+				glColor3fv(purple);
+			}
 			glPushMatrix();
 			glTranslatef(0.0, 0.0, size * 0.8);
 			glutSolidCone(size*2, size*0.8, 10, 10);
@@ -54,7 +69,10 @@ void Enemy::drawFigure()
 				glMaterialfv(GL_FRONT, GL_DIFFUSE, blue);
 				glMaterialfv(GL_FRONT, GL_SPECULAR, black);
 				glMaterialfv(GL_FRONT, GL_SHININESS, white);
-				glColor3fv(purple);
+				if (!takingDamage)
+				{
+					glColor3fv(purple);
+				}
 				glPushMatrix();
 				//glTranslatef(0.0, 0.0, size);
 				glRotatef(30, 1.0, 0.0, 0.0);
@@ -68,7 +86,10 @@ void Enemy::drawFigure()
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, black);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, black);
 			glMaterialfv(GL_FRONT, GL_SHININESS, white);
-			glColor3fv(black);
+			if (!takingDamage)
+			{
+				glColor3fv(black);
+			}
 			glPushMatrix();
 			glTranslatef(size*0.3, size*0.7, size*0.5);
 			glutSolidSphere(size*0.2, 10, 10);
@@ -85,7 +106,10 @@ void Enemy::drawFigure()
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, grey);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, grey);
 			glMaterialfv(GL_FRONT, GL_SHININESS, grey);
-			glColor3fv(white);
+			if (!takingDamage)
+			{
+				glColor3fv(white);
+			}
 			glPushMatrix();
 			glTranslatef(0.0, size*0.6, -size*0.2);
 			glRotatef(-150, 1.0, 0.0, 0.0);
@@ -99,7 +123,10 @@ void Enemy::drawFigure()
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, blue);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, blue);
 		glMaterialfv(GL_FRONT, GL_SHININESS, white);
-		glColor3fv(purple);
+		if (!takingDamage)
+		{
+			glColor3fv(purple);
+		}
 
 		//right
 		glPushMatrix();
@@ -121,7 +148,10 @@ void Enemy::drawFigure()
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, wood);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, wood);
 			glMaterialfv(GL_FRONT, GL_SHININESS, black);
-			glColor3fv(wood);
+			if (!takingDamage)
+			{
+				glColor3fv(wood);
+			}
 			glPushMatrix();
 			glTranslatef(0.0, 0.0, size*1.4);
 			glRotatef(-60, 1.0, 1.0, 0.0);
@@ -146,7 +176,10 @@ void Enemy::drawFigure()
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, blue);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, blue);
 		glMaterialfv(GL_FRONT, GL_SHININESS, black);
-		glColor3fv(purple);
+		if (!takingDamage)
+		{
+			glColor3fv(purple);
+		}
 		glPushMatrix();
 		glTranslatef(0.0, 0.0, -1.0);
 		glutSolidCone(size*1.5, size*4, 10, 10);

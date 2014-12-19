@@ -1,6 +1,7 @@
 // functions for Core
 
 #include <math.h>
+#include <stdlib.h>
 
 #include "particle.h"
 #include "main.h"

@@ -1,4 +1,4 @@
-#ifndef CHARACTER_H
+ #ifndef CHARACTER_H
 #define CHARACTER_H
 
 #include <vector>
@@ -13,15 +13,21 @@ public:
 	Character(float * _pos, float _size);
 	~Character();
 
+	vector<Projectile> getSpellList();
 	float * getPos();
 	float getX();
 	float getY();
 	float getZ();
 	float getSize();
+	/* Decrement lifepoints from hit */
+	void loselife();
+	void resolveSpell(int i);
 	virtual void update(); // = 0
 	void draw();
 
 protected:
+	bool takingDamage;			//In the state of taking damage
+	int damageDuration;		//Duration that damage is absorbed
 	int lifePoints;			//Life points of Character
 
 	int spellInterval;		//# of Spells per period
@@ -41,6 +47,7 @@ protected:
 	Particle createParticle(float* o);
 	void updateSpells();
 	void updateParticles();
+	void updateDamage();
 	void drawSpells();
 	void drawParticles();
 	virtual void drawFigure(); // = 0

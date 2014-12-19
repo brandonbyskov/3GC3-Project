@@ -5,6 +5,8 @@ using namespace std;
 
 Character::Character(float * _pos, float _size) {
 	lifePoints = 3;
+	takingDamage = false;
+	damageDuration = 0;
 	size = _size;
 
 	particleIntervalCount = 0;
@@ -23,6 +25,11 @@ Character::~Character() {
 }
 
 /* Create projectile at particular origin aimed at a direction */
+
+vector<Projectile> Character::getSpellList()
+{
+	return spell;
+}
 
 float * Character::getPos()
 {
@@ -51,6 +58,19 @@ float Character::getZ()
 float Character::getSize()
 {
 	return size;
+}
+
+/* Decrement lifepoints from hit */
+void Character::loselife()
+{
+	takingDamage = true;
+	lifePoints--;
+}
+
+/* Deletes projectile of spell that hits */
+void Character::resolveSpell(int i)
+{
+	spell.erase(spell.begin()+i);
 }
 
 /* Updates movement, spells, particle parameters...ect. */
@@ -118,6 +138,20 @@ void Character::updateParticles()
 		if (particle[i].getAge() > gMaxParticleAge)
 		{
 			particle.pop_back();
+		}
+	}
+}
+
+/* Update Damage step parameters */
+void Character::updateDamage()
+{
+	if (takingDamage)
+	{
+		damageDuration++;
+		if (damageDuration >= 30)
+		{
+			takingDamage = false;
+			damageDuration = 0;
 		}
 	}
 }

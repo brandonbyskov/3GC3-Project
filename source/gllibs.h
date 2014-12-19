@@ -11,12 +11,12 @@
 #define GLLIBS_H
 
 //eric's includes
-//#include <glew.h>
-//#include <freeglut.h>
+#include <glew.h>
+#include <freeglut.h>
 
 //brandon's includes:
-#  include <GL/gl.h>
-#  include <GL/glu.h>
-#  include <GL/freeglut.h>
+//#include <GL/gl.h>
+//#include <GL/glu.h>
+//#include <GL/freeglut.h>
 
 #endif // GLLIBS_H

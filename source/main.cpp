@@ -644,6 +644,7 @@ float getUnitVector(float dX, float dY, float dZ)
 }
 
 /* Takes 2 points in a line and returns the unit direction parameters */
+float uD[3];
 float * getUnitDirection(float x1, float y1, float z1, float x2, float y2, float z2)
 {
 	float dX = x2 - x1;
@@ -651,7 +652,10 @@ float * getUnitDirection(float x1, float y1, float z1, float x2, float y2, float
 	float dZ = z2 - z1;
 	
 	float uV = getUnitVector(dX, dY, dZ);
-	float uD[] = {dX/uV, dY/uV, dZ/uV};		//unit form
+	
+	uD[0] = dX/uV;
+	uD[1] = dY/uV;
+	uD[2] = dZ/uV;		//unit form
 
 	return uD;
 }
@@ -708,6 +712,41 @@ void display(void)
 	glutSwapBuffers();
 }
 
+/* Checks if projectile hits character */
+void checkSpellCollision(Character *p, Character *e)
+{
+	float pX = p -> getX();
+	float pY = p -> getY();
+	float pZ = p -> getZ();
+
+	float eX = e -> getX();
+	float eY = e -> getY();
+	float eZ = e -> getZ();
+
+	vector<Projectile> playerCLS = p -> getSpellList();		//Player Current Live Spell list
+	vector<Projectile> enemyCLS = e -> getSpellList();		//Enemy Current Live Spell list
+
+	for (size_t i = 0; i < playerCLS.size(); i++)
+	{
+		/* Player Spell hits Enemy */
+		if (playerCLS[i].getX()+2 >= e->getX()-2 && playerCLS[i].getX()-2 <= e->getX()+e->getSize()+2 &&
+			playerCLS[i].getY()+2 >= e->getX()-2 && playerCLS[i].getY()-2 <= e->getY()+e->getSize()+2 &&
+			playerCLS[i].getZ()+2 >= e->getX()-2 && playerCLS[i].getZ()-2 <= e->getZ()+e->getSize()+2)
+		{
+ 			e -> loselife();		  //Decrement lifepoint
+			p -> resolveSpell(i);	  //remove projectile
+		}
+
+		/* Enemy Spell hits Player */
+		/*else if (enemyCLS[i].getX() <= p->getX() && enemyCLS[i].getX() >= p->getX()+p->getSize() &&
+			enemyCLS[i].getY() <= p->getX() && enemyCLS[i].getY() >= p->getY()+p->getSize() &&
+			enemyCLS[i].getZ() <= p->getX() && enemyCLS[i].getZ() >= p->getZ()+p->getSize())
+		{
+			p -> loselife();
+		}*/
+	}
+}
+
 void checkCollision(Terrain *t, Player *p)
 {
 	float pX = p->getX();
@@ -740,6 +779,7 @@ void checkCollision(Terrain *t, Player *p)
 /* Idle call back function which is run everytime nothing else is called back */
 void idle()
 {
+	checkSpellCollision(&player1, &tempEnemy);
 	checkCollision(terrain, &player1);
 	player1.update();
 	tempEnemy.update();
