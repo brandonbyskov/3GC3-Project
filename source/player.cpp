@@ -2,9 +2,7 @@
 #include "main.h"
 #include "math.h"
 
-#  include <GL/gl.h>
-#  include <GL/glu.h>
-#  include <GL/freeglut.h>
+#include "gllibs.h"
 
 Player::Player(float* _o, float _size) : Character(_o, _size)
 {
@@ -233,7 +231,7 @@ void Player::drawFigure()
 	glMaterialfv(GL_FRONT, GL_SHININESS, white);
 
 	glPushMatrix();
-	glTranslatef(pos[0]+2, pos[1]+2, pos[2]+2);
+	glTranslatef(pos[0], pos[1]+1, pos[2]);
 	glRotatef(-90,1,0,0);
 	glRotatef(-90,0,0,1);
 	glutSolidCylinder(size, size*2, 10, 10);

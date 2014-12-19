@@ -1,9 +1,7 @@
 #include "enemy.h"
 #include "main.h"
 
-#  include <GL/gl.h>
-#  include <GL/glu.h>
-#  include <GL/freeglut.h>
+#include "gllibs.h"
 
 Enemy::Enemy(float* _o, float _size) : Character(_o, _size) {
 }

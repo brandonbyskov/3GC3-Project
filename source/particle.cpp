@@ -4,9 +4,7 @@
 
 #include "particle.h"
 #include "main.h"
-#  include <GL/gl.h>
-#  include <GL/glu.h>
-#  include <GL/freeglut.h>
+#include "gllibs.h"
 
 /* Constructor - Initializes a Particle with float position coordinates */
 Particle::Particle(float* _pos)

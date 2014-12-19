@@ -1,9 +1,7 @@
 // functions for Core
 
 #include "projectile.h"
-#  include <GL/gl.h>
-#  include <GL/glu.h>
-#  include <GL/freeglut.h>
+#include "gllibs.h"
 
 Projectile::Projectile(float _size, float *_colour, float * _pos, float * _dir)
 {

@@ -11,13 +11,8 @@
 #include <time.h>
 #include <list>
 #include <vector>
-//#include <glew.h>
-//#include <freeglut.h>
 
-//brandon's includes:
-#  include <GL/gl.h>
-#  include <GL/glu.h>
-#  include <GL/freeglut.h>
+#include "gllibs.h"
 
 #include "main.h"
 #include "enemy.h"
@@ -776,7 +771,7 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	
 	
-	glutInitWindowSize(800, 800);
+	glutInitWindowSize(800,800);
 	glutInitWindowPosition(100, 100);
 
 	glutCreateWindow("Terrain");	//creates the window
