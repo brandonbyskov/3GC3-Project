@@ -1,4 +1,9 @@
 #include "block.h"
+#include "main.h"
+#include "enemy.h"
+#include "math.h"
+#include "stdlib.h"
+#include "time.h"
 
 #include "gllibs.h"
 
@@ -6,7 +11,10 @@ Block::Block(float* o, float blockSize) {
 	
 	size = blockSize;
 	d = w = h = size;
-	is_active = true;
+	is_active = true;	 
+	int randNumba = rand() % 20 + 1;
+	randNumba = rand() % 20 + 1;
+	randNumba = rand() % 20 + 1;
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -49,9 +57,39 @@ Block::Block(float* o, float blockSize) {
 	v[5][2] = origin[2]-d/2; 
 	v[6][2] = origin[2]-d/2;
 	v[7][2] = origin[2]-d/2;
+
+	if (randNumba % 3 == 0)
+	{
+		Enemy enem(origin, 0.5);
+		enemyList.push_back(enem);
+	}
 }
 
 Block::~Block() {
+}
+
+void Block::toggleActive()
+{
+	is_active = !is_active;
+}
+
+float Block::getX()
+{
+	return origin[0];
+}
+float Block::getY()
+{
+	return origin[1];
+}
+
+float Block::getZ()
+{
+	return origin[2];
+}
+
+float Block::getSize()
+{
+	return size;
 }
 
 void Block::drawFace(int a, int b, int c, int d, float v[8][3]) {
@@ -72,7 +110,7 @@ void Block::drawFace(int a, int b, int c, int d, float v[8][3]) {
 
 void Block::draw() {
 
-	glColor4f(0.25,0.8,0.25,1.0);
+	glColor4fv(wood);
 	drawFace(0, 3, 2, 1, v);
 
 	//side
@@ -83,6 +121,7 @@ void Block::draw() {
 
 	drawFace(2, 3, 7, 6, v);
 	drawFace(6, 5, 4, 7, v);
+
 	//don't render bottom
 	//glColor4f(0.25,.25,1.0,1.0);
 	//drawFace(4, 0, 3, 7, v);

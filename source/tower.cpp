@@ -61,6 +61,31 @@ Tower::Tower(float* o, int towerSize, int towerLayers, float _blockSize)
 Tower::~Tower() {
 }
 
+void Tower::toggleBlock(int i, int j, int k)
+{
+	block[i][j][k]->toggleActive();
+}
+
+float Tower::getDepth()
+{
+	return d;
+}
+
+float Tower::getWidth()
+{
+	return w;
+}
+
+float Tower::getHeight()
+{
+	return h;
+}
+
+Block Tower::getBlock(int ii, int jj, int kk)
+{
+	return *block[ii][jj][kk];
+}
+
 void Tower::drawPolygon(int a, int b, int c, int d, float v[8][3]) {
 	glMaterialfv(GL_FRONT, GL_AMBIENT, colour2);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, colour2);

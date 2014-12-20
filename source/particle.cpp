@@ -6,6 +6,7 @@
 #include "particle.h"
 #include "main.h"
 #include "gllibs.h"
+#include "algorithm"
 
 /* Constructor - Initializes a Particle with float position coordinates */
 Particle::Particle(float* _pos)

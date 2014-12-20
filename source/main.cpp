@@ -126,6 +126,8 @@ void setPlayerLookDirection(float x, float y, float z)
 float gOrigin[] = {0.0, 50.0, 0};
 float enemyOrigin[] = {10.0, 20.0, 10.0};
 
+vector<Enemy> enemyList;
+
 Player* player1 = new Player(gOrigin, 0.5);
 Enemy* tempEnemy = new Enemy(enemyOrigin, 0.5);
 Tower* tower = new Tower(gOrigin,towerSize,towerLayers,blockSize);
@@ -378,13 +380,18 @@ void display(void)
 	tempEnemy->draw();
 	tower->draw();
 
+	for(int i = 0; i < enemyList.size(); i++)
+	{
+		enemyList[i].draw();
+	}
+
 	displayStats();
 	/* Swap front buffer with back buffer */
 	glutSwapBuffers();
 }
 
 /* Checks if projectile hits character */
-void checkSpellCollision(Character *p, Character *e)
+void checkSpellCollision(Character *p, Character *e, Tower *t)
 {
 	float pX = p -> getX();
 	float pY = p -> getY();
@@ -407,6 +414,24 @@ void checkSpellCollision(Character *p, Character *e)
  			e -> loselife();		  //Decrement lifepoint
 			p -> resolveSpell(i);	  //remove projectile
 		}
+
+		/* Player hits Block */
+		//for (size_t j = 0; j < t->getHeight(); j++)
+		//{
+			//for (size_t k = 0; k < t->getDepth(); k++)
+			//{
+			//    for (size_t l = 0; l < t->getWidth(); l++)
+			//	{
+			//		//if (playerCLS[i].getX() >= t->getBlock(j,k,l).getX() && playerCLS[i].getX() <= t->getBlock(j,k,l).getX() + t->getBlock(j,k,l).getSize() &&
+			//		//	playerCLS[i].getY() >= t->getBlock(j,k,l).getY() && playerCLS[i].getY() <= t->getBlock(j,k,l).getY() + t->getBlock(j,k,l).getSize() &&
+			//		//	playerCLS[i].getZ() >= t->getBlock(j,k,l).getZ() && playerCLS[i].getZ() <= t->getBlock(j,k,l).getZ() + t->getBlock(j,k,l).getSize())
+			//		//{
+			//		//	//t->toggleBlock[j][k][l];
+			//		//}
+
+			//	}
+			//}
+		//}
 	}
 	for (size_t i = 0; i < enemyCLS.size(); i++)
 	{
@@ -426,9 +451,18 @@ void checkSpellCollision(Character *p, Character *e)
 void idle()
 {
 	getPlayerPosition();
-	checkSpellCollision(player1, tempEnemy);
-	player1->update();
 	tempEnemy->update();
+	
+	for(int i = 0; i < enemyList.size(); i++)
+	{
+		if (enemyList[i].getLifePoints() <= 0)
+		{
+			enemyList.erase(enemyList.begin() + i);
+		}
+		checkSpellCollision(player1, &enemyList[i], tower);
+		enemyList[i].update();
+	}
+	player1->update();
 
 	/* Call back display function */
 	glutPostRedisplay();

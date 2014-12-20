@@ -2,6 +2,7 @@
 #define MAIN_H
 
 #include "core.h"
+#include "enemy.h"
 
 //global variables
 extern Core *core;
@@ -32,5 +33,7 @@ extern float black[];
 extern float grey[];
 extern float skin[];
 extern float wood[];
+
+extern vector<Enemy> enemyList;
 
 #endif // Main_H

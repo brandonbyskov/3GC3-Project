@@ -1,5 +1,6 @@
 #include "camera.h"
 #include "math.h"
+#include <algorithm>
 using namespace std;
 
 #define PI 3.14159265
@@ -23,8 +24,8 @@ void Camera::move(int x, int y) {
 	theta += y*speed;
 	
 	//bounds theta to between 0 and 85 degrees
-	theta = fmin(theta, 85);
-	theta = fmax(theta, 0);
+	theta = min((int)theta, 85);
+	theta = max((int)theta, 0);
 
 	beta -= x *speed;//*180 * (distance * sin((speed)*PI/180)) / (2*PI*distance*sin((90-theta)*PI/180));
 

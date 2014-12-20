@@ -30,6 +30,12 @@ public:
 	Tower(float* o, int towerSize, int towerLayers, float _blockSize);//float _d, float _w, float _h);
 	~Tower();
 
+	float getDepth();
+	float getHeight();
+	float getWidth();
+	Block getBlock(int i, int j, int k);
+
+	void toggleBlock(int i, int j, int k);
 	void drawPolygon(int a, int b, int c, int d, float v[8][3]);
 	void drawPolygonFrame(int a, int b, int c, int d, float v[8][3]);
 	void draw();

@@ -15,6 +15,7 @@ public:
 	~Character();
 
 	vector<Projectile> getSpellList();
+	int getLifePoints();
 	float * getPos();
 	float getX();
 	float getY();

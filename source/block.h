@@ -7,8 +7,12 @@ public:
 
 	Block(float* o, float blockSize);
 	~Block();
+    void toggleActive();
 
-
+	float getX();
+	float getY();
+	float getZ();
+	float getSize();
 
 	void drawFace(int a, int b, int c, int d, float v[8][3]);
 	void draw();

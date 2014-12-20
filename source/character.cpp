@@ -31,6 +31,13 @@ vector<Projectile> Character::getSpellList()
 	return spell;
 }
 
+/* Returns current lifepoints */
+int Character::getLifePoints()
+{
+	return lifePoints;
+}
+
+
 float * Character::getPos()
 {
 	return pos;
@@ -64,7 +71,6 @@ float Character::getSize()
 void Character::loselife()
 {
 	takingDamage = true;
-	lifePoints--;
 }
 
 /* Deletes projectile of spell that hits */
@@ -154,6 +160,7 @@ void Character::updateDamage()
 		if (damageDuration >= 30)
 		{
 			takingDamage = false;
+			lifePoints--;
 			damageDuration = 0;
 		}
 	}

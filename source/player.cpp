@@ -1,12 +1,13 @@
 #include "player.h"
 #include "main.h"
 #include "math.h"
+#include "algorithm"
 
 #include "gllibs.h"
-
+				 
 Player::Player(float* _o, float _size) : Character(_o, _size)
 {
-	lifePoints = 3;
+	lifePoints = 30000;
 	hasHorizontalCollision = false;
 	movingForward = false;
 	movingBackward = false;
@@ -225,7 +226,7 @@ void Player::move()
 
 	//limit max speed
 	if (fabs(velocity[1])>terminalVelocity) {
-		velocity[1] = copysign(terminalVelocity,velocity[1]);
+		velocity[1] = _copysign(terminalVelocity,velocity[1]);
 	}
 }
 void Player::drawFigure()
