@@ -11,6 +11,7 @@ extern float cameraSpeed;
 extern float cameraDistance;
 extern float gCamPos[3];
 extern float gPlayerLookDirection[3];
+extern float gPlayerPosition[3];
 
 extern float gravity;
 extern float friction;

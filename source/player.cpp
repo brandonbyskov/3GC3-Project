@@ -91,8 +91,8 @@ void Player::cancelMovement(int v)
 
 void Player::castSpell()
 {
-	/* Insert a new Particle at the back of the Particle vector list */
-	spell.push_back(createProjectile(gPlayerLookDirection));
+	/* Insert a new Spell at the back of the Spell vector list */
+	spell.push_back(createProjectile(red, gPlayerLookDirection));
 }
 
 void Player::update()
@@ -224,6 +224,10 @@ void Player::move()
 }
 void Player::drawFigure()
 {
+	if (takingDamage)
+	{
+		glColor3fv(red);
+	}
 	//Body
 	glMaterialfv(GL_FRONT, GL_AMBIENT, blue);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, blue);
@@ -241,7 +245,10 @@ void Player::drawFigure()
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, skin);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, skin);
 		glMaterialfv(GL_FRONT, GL_SHININESS, skin);
-		glColor3fv(skin);
+		if (!takingDamage)
+		{
+			glColor3fv(skin);
+		}
 		glPushMatrix();
 		glTranslatef(0.0, 0.0, size*2);
 		glutSolidSphere(size, 10, 10);
@@ -251,7 +258,10 @@ void Player::drawFigure()
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, blue);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, black);
 			glMaterialfv(GL_FRONT, GL_SHININESS, white);
-			glColor3fv(blue);
+			if (!takingDamage)
+			{
+				glColor3fv(blue);
+			}
 			glPushMatrix();
 			glTranslatef(0.0, 0.0, size * 0.8);
 			glutSolidCone(size*2, size*0.8, 10, 10);
@@ -261,7 +271,10 @@ void Player::drawFigure()
 				glMaterialfv(GL_FRONT, GL_DIFFUSE, blue);
 				glMaterialfv(GL_FRONT, GL_SPECULAR, black);
 				glMaterialfv(GL_FRONT, GL_SHININESS, white);
-				glColor3fv(blue);
+				if (!takingDamage)
+				{
+					glColor3fv(blue);
+				}
 				glPushMatrix();
 				//glTranslatef(0.0, 0.0, size);
 				glRotatef(30, 1.0, 0.0, 0.0);
@@ -275,7 +288,10 @@ void Player::drawFigure()
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, black);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, black);
 			glMaterialfv(GL_FRONT, GL_SHININESS, white);
-			glColor3fv(black);
+			if (!takingDamage)
+			{
+				glColor3fv(black);
+			}
 			glPushMatrix();
 			glTranslatef(size*0.3, size*0.7, size*0.5);
 			glutSolidSphere(size*0.2, 10, 10);
@@ -292,7 +308,10 @@ void Player::drawFigure()
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, grey);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, grey);
 			glMaterialfv(GL_FRONT, GL_SHININESS, grey);
-			glColor3fv(grey);
+			if (!takingDamage)
+			{
+				glColor3fv(grey);
+			}
 			glPushMatrix();
 			glTranslatef(0.0, size*0.6, -size*0.2);
 			glRotatef(-150, 1.0, 0.0, 0.0);
@@ -306,7 +325,10 @@ void Player::drawFigure()
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, blue);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, blue);
 		glMaterialfv(GL_FRONT, GL_SHININESS, white);
-		glColor3fv(blue);
+		if (!takingDamage)
+		{
+			glColor3fv(blue);
+		}
 
 		//right
 		glPushMatrix();
@@ -328,7 +350,10 @@ void Player::drawFigure()
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, wood);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, wood);
 			glMaterialfv(GL_FRONT, GL_SHININESS, black);
-			glColor3fv(wood);
+			if (!takingDamage)
+			{
+				glColor3fv(wood);
+			}
 			glPushMatrix();
 			glTranslatef(0.0, 0.0, size*1.4);
 			glRotatef(-60, 1.0, 1.0, 0.0);
@@ -339,7 +364,10 @@ void Player::drawFigure()
 				glMaterialfv(GL_FRONT, GL_DIFFUSE, red);
 				glMaterialfv(GL_FRONT, GL_SPECULAR, red);
 				glMaterialfv(GL_FRONT, GL_SHININESS, black);
-				glColor3fv(red);
+				if (!takingDamage)
+				{
+					glColor3fv(red);
+				}
 				glPushMatrix();
 				glTranslatef(0.0, 0.0, size*4);
 				glRotatef(0.0, 1.0, 1.0, 0.0);
@@ -353,7 +381,10 @@ void Player::drawFigure()
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, blue);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, blue);
 		glMaterialfv(GL_FRONT, GL_SHININESS, black);
-		glColor3fv(blue);
+		if (!takingDamage)
+		{
+			glColor3fv(blue);
+		}
 		glPushMatrix();
 		glTranslatef(0.0, 0.0, -1.0);
 		glutSolidCone(size*1.5, size*4, 10, 10);

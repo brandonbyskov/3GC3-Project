@@ -46,6 +46,7 @@ float cameraSpeed;
 float cameraDistance;
 float gCamPos[3];
 float gPlayerLookDirection[3];
+float gPlayerPosition[3];
 
 /* Global physics */
 float gravity;
@@ -389,6 +390,7 @@ void setPlayerLookDirection(float x, float y, float z)
 	gPlayerLookDirection[2] = z;
 }
 
+
 /* Create a particle at particular origin coordinates */
 
 /* Creates a platform at the particular origin coordinates with a specified width and heigth, respectively */
@@ -435,6 +437,14 @@ float enemyOrigin[] = {10.0, 20.0, 10.0};
 
 Player player1 = createPlayer(gOrigin, 0.5);
 Enemy tempEnemy = createEnemy(enemyOrigin, 0.5);
+
+void getPlayerPosition()
+{
+	gPlayerPosition[0] = player1.getX();
+	gPlayerPosition[1] = player1.getY();
+	gPlayerPosition[2] = player1.getZ();
+}
+
 
 /* Initializes all the variables for the Particle Simulation */
 void init()
@@ -729,21 +739,24 @@ void checkSpellCollision(Character *p, Character *e)
 	for (size_t i = 0; i < playerCLS.size(); i++)
 	{
 		/* Player Spell hits Enemy */
-		if (playerCLS[i].getX()+2 >= e->getX()-2 && playerCLS[i].getX()-2 <= e->getX()+e->getSize()+2 &&
-			playerCLS[i].getY()+2 >= e->getX()-2 && playerCLS[i].getY()-2 <= e->getY()+e->getSize()+2 &&
-			playerCLS[i].getZ()+2 >= e->getX()-2 && playerCLS[i].getZ()-2 <= e->getZ()+e->getSize()+2)
+		if (playerCLS[i].getX() >= e->getX()-1 && playerCLS[i].getX() <= e->getX()+1+e->getSize()*2 &&
+			playerCLS[i].getY() >= e->getY() && playerCLS[i].getY() <= e->getY()+1+e->getSize()*3 &&
+			playerCLS[i].getZ() >= e->getZ()-1 && playerCLS[i].getZ() <= e->getZ()+1+e->getSize()*2)
 		{
  			e -> loselife();		  //Decrement lifepoint
 			p -> resolveSpell(i);	  //remove projectile
 		}
-
-		/* Enemy Spell hits Player */
-		/*else if (enemyCLS[i].getX() <= p->getX() && enemyCLS[i].getX() >= p->getX()+p->getSize() &&
-			enemyCLS[i].getY() <= p->getX() && enemyCLS[i].getY() >= p->getY()+p->getSize() &&
-			enemyCLS[i].getZ() <= p->getX() && enemyCLS[i].getZ() >= p->getZ()+p->getSize())
+	}
+	for (size_t i = 0; i < enemyCLS.size(); i++)
+	{
+			/* Enemy Spell hits Player */
+		if (enemyCLS[i].getX() >= p->getX()-1 && enemyCLS[i].getX() <= p->getX()+1+p->getSize()*2 &&
+			enemyCLS[i].getY() >= p->getY() && enemyCLS[i].getY() <= p->getY()+1+p->getSize()*3 &&
+			enemyCLS[i].getZ() >= p->getZ()-1 && enemyCLS[i].getZ() <= p->getZ()+1+p->getSize()*2)
 		{
-			p -> loselife();
-		}*/
+ 			p -> loselife();		  //Decrement lifepoint
+			e -> resolveSpell(i);	  //remove projectile
+		}
 	}
 }
 
@@ -779,6 +792,7 @@ void checkCollision(Terrain *t, Player *p)
 /* Idle call back function which is run everytime nothing else is called back */
 void idle()
 {
+	getPlayerPosition();
 	checkSpellCollision(&player1, &tempEnemy);
 	checkCollision(terrain, &player1);
 	player1.update();

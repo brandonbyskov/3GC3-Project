@@ -13,7 +13,7 @@ Character::Character(float * _pos, float _size) {
 	particleInterval = 10;
 
 	spellIntervalCount = 0;
-	spellInterval = 10;
+	spellInterval = 30;
 				
 	for (int i = 0; i < 3; i++)
 	{
@@ -70,7 +70,10 @@ void Character::loselife()
 /* Deletes projectile of spell that hits */
 void Character::resolveSpell(int i)
 {
-	spell.erase(spell.begin()+i);
+	if (spell.size() != 0)
+	{
+		spell.erase(spell.begin()+i);
+	}
 }
 
 /* Updates movement, spells, particle parameters...ect. */
@@ -84,10 +87,9 @@ void Character::draw()
 	drawSpells();
 }
 
-Projectile
-Character::createProjectile(float * _dir)
+Projectile Character::createProjectile(float * _colour, float * _dir)
 {
-	Projectile p(size, red, pos, _dir);
+	Projectile p(size, _colour, pos, _dir);
 	return p;
 }
 

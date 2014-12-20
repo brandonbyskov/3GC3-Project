@@ -43,7 +43,7 @@ protected:
 	vector<Particle> particle;
 
 	//methods
-	Projectile createProjectile(float * _dir);
+	Projectile createProjectile(float * _colour, float * _dir);
 	Particle createParticle(float* o);
 	void updateSpells();
 	void updateParticles();

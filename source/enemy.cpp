@@ -7,6 +7,53 @@ Enemy::Enemy(float* _o, float _size) : Character(_o, _size) {
 }
 
 Enemy::~Enemy() {
+	isVisible = true;
+	for (int i = 0; i < 3; i++)
+	{
+		directionTowardsPlayer[i] = 0.0;
+	}
+}
+
+/* Takes the distance of each 3d parameter and constructs a unit vector */
+float Enemy::AIGetUnitVector(float dX, float dY, float dZ)
+{
+	 return sqrt(dX*dX + dY*dY + dZ*dZ);
+}
+
+/* Takes 2 points in a line and returns the unit direction parameters */
+
+float * Enemy::AIGetUnitDirection(float x1, float y1, float z1, float x2, float y2, float z2)
+{
+	float dX = x2 - x1;
+	float dY = y2 - y1;
+	float dZ = z2 - z1;
+	
+	float uV = AIGetUnitVector(dX, dY, dZ);
+	float uD[3];
+	uD[0] = dX/uV;
+	uD[1] = dY/uV;
+	uD[2] = dZ/uV;		//unit form
+
+	return uD;
+}
+
+void Enemy::autoFire()
+{
+	spellIntervalCount++;
+	if (spellIntervalCount % spellInterval == 0)
+	{
+		float fireDirection[3];
+		for (int i = 0; i < 3; i++)
+		{
+			fireDirection[i] = AIGetUnitDirection(getX(), getY(), getZ(), gPlayerPosition[0], gPlayerPosition[1], gPlayerPosition[2])[i];
+		}
+
+		spell.push_back(createProjectile(purple, fireDirection));
+		if (spellIntervalCount == 100)
+		{
+			spellIntervalCount = 0;
+		}
+	}
 }
 
 void Enemy::update()
@@ -14,10 +61,12 @@ void Enemy::update()
 	updateParticles();
 	updateSpells();
 	updateDamage();
+	autoFire();
 }
 
 void Enemy::drawFigure()
 {
+	
 	//Body
 	glMaterialfv(GL_FRONT, GL_AMBIENT, blue);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, blue);
