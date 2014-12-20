@@ -43,7 +43,7 @@ LFLAGS =
 LIBS = 
 
 # define the C source files
-SRCS = main.cpp core.cpp character.cpp particle.cpp projectile.cpp enemy.cpp player.cpp tower.cpp block.cpp
+SRCS = main.cpp core.cpp character.cpp particle.cpp projectile.cpp enemy.cpp player.cpp tower.cpp block.cpp camera.cpp
 
 # define the C object files 
 #

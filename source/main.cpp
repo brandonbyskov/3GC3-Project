@@ -18,6 +18,7 @@
 #include "enemy.h"
 #include "player.h"
 #include "tower.h"
+#include "camera.h"
 
 
 using namespace std;
@@ -44,8 +45,8 @@ float currentMouse[] = {0, 0, 0};
 /* Global origin */
 
 /* Camera */
-float cameraSpeed;
-float cameraDistance;
+float cameraSpeed = 0.25;
+float cameraDistance = 20;
 float gCamPos[3];
 float gPlayerLookDirection[3];
 float gPlayerPosition[3];
@@ -154,7 +155,8 @@ float enemyOrigin[] = {10.0, 20.0, 10.0};
 
 Player player1 = createPlayer(gOrigin, 0.5);
 Enemy tempEnemy = createEnemy(enemyOrigin, 0.5);
-Tower *tower = new Tower(gOrigin,towerSize,towerLayers,blockSize);
+Tower* tower = new Tower(gOrigin,towerSize,towerLayers,blockSize);
+Camera* camera = new Camera(player1.pos, cameraDistance, 1.0);
 
 void getPlayerPosition()
 {
@@ -180,8 +182,7 @@ void init()
 	setTheta(1.0, 1.0, 1.0);
 	setCamPosition(15.0, 15.0, 15.0);
 	setPlayerLookDirection(0.0, 0.0, 0.0);
-	cameraSpeed = 0.08;
-	cameraDistance = 20;
+
 
 	/* Enable lighting and create a light0 with ambience, diffusion and specularity */
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
@@ -291,59 +292,66 @@ void mouse(int button, int state, int x, int y)
 
 void passiveMouse(int x, int y)
 {
-	/* Rotate camera angle left if mouse moves left */
-	if (x - currentMouse[0] < 0)
-	{
-		gTheta[2] -= cameraSpeed;
-		gTheta[0] -= cameraSpeed;
-	}
+	///* Rotate camera angle left if mouse moves left */
+	//if (x - currentMouse[0] < 0)
+	//{
+	//	gTheta[2] -= cameraSpeed;
+	//	gTheta[0] -= cameraSpeed;
+	//}
 
-	/* Rotate camera angle Right if mouse moves right */
-	if (x - currentMouse[0] > 0)
-	{
-		gTheta[2] += cameraSpeed;
-		gTheta[0] += cameraSpeed;
-	}
-	
-	/* Rotate camera Down if mouse moves down */
-	if (y - currentMouse[1] < 0 && gTheta[1] > -2.0)
-	{
-		gTheta[1] -= cameraSpeed;
-	}
+	///* Rotate camera angle Right if mouse moves right */
+	//if (x - currentMouse[0] > 0)
+	//{
+	//	gTheta[2] += cameraSpeed;
+	//	gTheta[0] += cameraSpeed;
+	//}
+	//
+	///* Rotate camera Down if mouse moves down */
+	//if (y - currentMouse[1] < 0 && gTheta[1] > -2.0)
+	//{
+	//	gTheta[1] -= cameraSpeed;
+	//}
 
-	/* Rotate camera Up if mouse moves up */
-	if (y - currentMouse[1] > 0 && gTheta[1] < 2.0)
-	{
-		gTheta[1] += cameraSpeed;
-	}
+	///* Rotate camera Up if mouse moves up */
+	//if (y - currentMouse[1] > 0 && gTheta[1] < 2.0)
+	//{
+	//	gTheta[1] += cameraSpeed;
+	//}
+
+	camera->move(x - currentMouse[0], y - currentMouse[1]);
 
 	/* Set current mouse to current position */
 	currentMouse[0] = x;
 	currentMouse[1] = y;
 											  
 	/* Move cursor back to position if it goes out of screen */
-	if (currentMouse[0] > glutGet(GLUT_WINDOW_WIDTH) - 400)
+	if (currentMouse[0] > glutGet(GLUT_WINDOW_WIDTH) - 200)
 	{
 		glutWarpPointer(200, currentMouse[1]);
-		currentMouse[0]--;
+		currentMouse[0] = 200;
 	}
 	if (currentMouse[0] < 200)
 	{
-		glutWarpPointer(glutGet(GLUT_WINDOW_WIDTH) - 400, currentMouse[1]);
-		currentMouse[0]++;
+		glutWarpPointer(glutGet(GLUT_WINDOW_WIDTH) - 200, currentMouse[1]);
+		currentMouse[0] = glutGet(GLUT_WINDOW_WIDTH) - 200;
 	}
 
 	if (currentMouse[1] > glutGet(GLUT_WINDOW_HEIGHT) - 200)
 	{
-		glutWarpPointer(currentMouse[0], 100);
-		currentMouse[1]--;
+		glutWarpPointer(currentMouse[0], 200);
+		//currentMouse[1]-=1;
+		currentMouse[1] = 200;
+
 	}
 
-	if (currentMouse[1] < 100)
+	if (currentMouse[1] < 200)
 	{
 		glutWarpPointer(currentMouse[0], glutGet(GLUT_WINDOW_HEIGHT) - 200);
-		currentMouse[1]++;
+		//currentMouse[1]+=1;
+		currentMouse[1] = glutGet(GLUT_WINDOW_HEIGHT) - 200;
 	}
+
+
 }
 
 /* Takes the distance of each 3d parameter and constructs a unit vector */
@@ -395,17 +403,17 @@ void display(void)
 	glLoadIdentity();
 	
 
-	
+	camera->update();
 
-	gCamPos[0] = player1.getPos()[0] - cameraDistance*sin(gTheta[0]);
-	gCamPos[1] = player1.getPos()[1] + cameraDistance*sin(gTheta[1]);
-	gCamPos[2] = player1.getPos()[2] - cameraDistance*-cos(gTheta[2]);
+	//gCamPos[0] = player1.getPos()[0] - cameraDistance*sin(gTheta[0]);
+	//gCamPos[1] = player1.getPos()[1] + cameraDistance*sin(gTheta[1]);
+	//gCamPos[2] = player1.getPos()[2] - cameraDistance*-cos(gTheta[2]);
 
 	float t[3];
 
 	for (int i = 0; i < 3; i++)
 	{
-		 t[i] = getUnitDirection(gCamPos[0], gCamPos[1], gCamPos[2],
+		 t[i] = getUnitDirection((camera->position)[0], (camera->position)[1], (camera->position)[2],
 									player1.getPos()[0], player1.getPos()[1], player1.getPos()[2])[i];
 	}
 	
@@ -413,9 +421,9 @@ void display(void)
 	setPlayerLookDirection(t[0], t[1], t[2]);
 										
 	/* Adjust camera position and center based off of trigonometric rotation */
-	gluLookAt(gCamPos[0], 
-		gCamPos[1], 
-		gCamPos[2],
+	gluLookAt((camera->position)[0], 
+		(camera->position)[1], 
+		(camera->position)[2],
 		player1.getPos()[0],
 		player1.getPos()[1],
 		player1.getPos()[2],

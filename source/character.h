@@ -8,6 +8,7 @@ using namespace std;
 
 class Character {
 public:
+	float pos[3];			//Position
 
 	//methods
 	Character(float * _pos, float _size);
@@ -37,7 +38,7 @@ protected:
 	int particleIntervalCount;
 
 	float size;				//Size of character model
-	float pos[3];			//Position
+	//Position pos;
 
 	vector<Projectile> spell;
 	vector<Particle> particle;
