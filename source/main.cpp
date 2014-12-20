@@ -247,7 +247,7 @@ void keyboard(unsigned char key, int x, int y)
 {
 
 	/* Quit the simulation */
-	if (key =='q' || key == 'Q')
+	if (key =='q' || key == 'Q' || key == 27)
 	{
 		exit(1);
 	}
@@ -292,31 +292,6 @@ void mouse(int button, int state, int x, int y)
 
 void passiveMouse(int x, int y)
 {
-	///* Rotate camera angle left if mouse moves left */
-	//if (x - currentMouse[0] < 0)
-	//{
-	//	gTheta[2] -= cameraSpeed;
-	//	gTheta[0] -= cameraSpeed;
-	//}
-
-	///* Rotate camera angle Right if mouse moves right */
-	//if (x - currentMouse[0] > 0)
-	//{
-	//	gTheta[2] += cameraSpeed;
-	//	gTheta[0] += cameraSpeed;
-	//}
-	//
-	///* Rotate camera Down if mouse moves down */
-	//if (y - currentMouse[1] < 0 && gTheta[1] > -2.0)
-	//{
-	//	gTheta[1] -= cameraSpeed;
-	//}
-
-	///* Rotate camera Up if mouse moves up */
-	//if (y - currentMouse[1] > 0 && gTheta[1] < 2.0)
-	//{
-	//	gTheta[1] += cameraSpeed;
-	//}
 
 	camera->move(x - currentMouse[0], y - currentMouse[1]);
 
@@ -339,7 +314,6 @@ void passiveMouse(int x, int y)
 	if (currentMouse[1] > glutGet(GLUT_WINDOW_HEIGHT) - 200)
 	{
 		glutWarpPointer(currentMouse[0], 200);
-		//currentMouse[1]-=1;
 		currentMouse[1] = 200;
 
 	}
@@ -347,7 +321,6 @@ void passiveMouse(int x, int y)
 	if (currentMouse[1] < 200)
 	{
 		glutWarpPointer(currentMouse[0], glutGet(GLUT_WINDOW_HEIGHT) - 200);
-		//currentMouse[1]+=1;
 		currentMouse[1] = glutGet(GLUT_WINDOW_HEIGHT) - 200;
 	}
 
