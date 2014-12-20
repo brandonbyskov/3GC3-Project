@@ -87,16 +87,13 @@ float wood[] = {0.52, 0.37, 0.26};
 
 void printInstructions()
 {
-	cout << "Commands\n";
-	cout << "___________________________\n";
-	cout << "Quit                                       'Q'\n";
-	cout << "rotate camera:                          Cursor\n";
-	cout << "Move Character:                      WASD keys\n";
-	cout << "Toggle Wireframe Mode:                     'F'\n";
-	cout << "Toggle Color Map Mode:                     'C'\n";
-	cout << "Reset Terrain                              'R'\n";
-	cout << "Change Terrain Parameters          Right Click\n";
-	cout << "Note: You must reset the Terrain to use new Terrain parameters.\n";
+	cout << " Commands\n";
+	cout << "______________________________________________\n";
+	cout << "  Quit                              'Q' or ESC\n";
+	cout << "  Rotate camera:                        Cursor\n";
+	cout << "  Move Character:                    WASD keys\n";
+	cout << "  Levatate Character:          Space Bar (' ')\n";
+	cout << "  Fire Spell                 'G' or Left Click\n";
 
 }
 
