@@ -125,45 +125,20 @@ void setPlayerLookDirection(float x, float y, float z)
 }
 
 
-/* Returns a newly instantiated an player object */
-Player createPlayer(float* o, float m)
-{
-	float pOrigin[3];
-	for (int i = 0; i < 3; i++)
-	{
-		pOrigin[i] = o[i];
-	}
-
-	Player p(pOrigin, m);
-	return p;
-}
-
-/* Returns a newly instantiated an enemy object */
-Enemy createEnemy(float* o, float m)
-{
-	float eOrigin[3];
-	for (int i = 0; i < 3; i++)
-	{
-		eOrigin[i] = o[i];
-	}
-
-	Enemy e(eOrigin, m);
-	return e;
-}
 
 float gOrigin[] = {0.0, 50.0, 0};
 float enemyOrigin[] = {10.0, 20.0, 10.0};
 
-Player player1 = createPlayer(gOrigin, 0.5);
-Enemy tempEnemy = createEnemy(enemyOrigin, 0.5);
+Player* player1 = new Player(gOrigin, 0.5);
+Enemy* tempEnemy = new Enemy(enemyOrigin, 0.5);
 Tower* tower = new Tower(gOrigin,towerSize,towerLayers,blockSize);
-Camera* camera = new Camera(player1.pos, cameraDistance, 1.0);
+Camera* camera = new Camera(player1->pos, cameraDistance, 1.0);
 
 void getPlayerPosition()
 {
-	gPlayerPosition[0] = player1.getX();
-	gPlayerPosition[1] = player1.getY();
-	gPlayerPosition[2] = player1.getZ();
+	gPlayerPosition[0] = player1->getX();
+	gPlayerPosition[1] = player1->getY();
+	gPlayerPosition[2] = player1->getZ();
 }
 
 
@@ -222,25 +197,25 @@ void keyboardUp(unsigned char key, int x, int y)
 	/* Character Movement Release*/
 	if (key == ' ')
 	{
-		player1.cancelMovement(4);
+		player1->cancelMovement(4);
 	}
 
 	if (key == 'w' || key == 'W')
 	{
-		player1.cancelMovement(1);
+		player1->cancelMovement(1);
 	}
 	if (key == 's' || key == 'S')
 	{
-		player1.cancelMovement(0);
+		player1->cancelMovement(0);
 	}
 
 	if (key == 'd' || key == 'D')
 	{
-		player1.cancelMovement(3);
+		player1->cancelMovement(3);
 	}
 	if (key == 'a' || key == 'A')
 	{
-		player1.cancelMovement(2);
+		player1->cancelMovement(2);
 	}
 }
 void keyboard(unsigned char key, int x, int y)
@@ -256,28 +231,28 @@ void keyboard(unsigned char key, int x, int y)
 
 	if (key == ' ')
 	{
-		player1.setMovement(4);
+		player1->setMovement(4);
 	}
 	if (key == 'w' || key == 'W')
 	{
-		player1.setMovement(1);
+		player1->setMovement(1);
 	}
 	if (key == 's' || key == 'S')
 	{
-		player1.setMovement(0);
+		player1->setMovement(0);
 	}
 
 	if (key == 'd' || key == 'D')
 	{
-		player1.setMovement(3);
+		player1->setMovement(3);
 	}
 	if (key == 'a' || key == 'A')
 	{
-		player1.setMovement(2);
+		player1->setMovement(2);
 	}
 	if (key == 'g' || key == 'G')
 	{
-		player1.castSpell();
+		player1->castSpell();
 	}
 }
 
@@ -286,7 +261,7 @@ void mouse(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		player1.castSpell();
+		player1->castSpell();
 	}
 }
 
@@ -315,7 +290,6 @@ void passiveMouse(int x, int y)
 	{
 		glutWarpPointer(currentMouse[0], 200);
 		currentMouse[1] = 200;
-
 	}
 
 	if (currentMouse[1] < 200)
@@ -378,16 +352,13 @@ void display(void)
 
 	camera->update();
 
-	//gCamPos[0] = player1.getPos()[0] - cameraDistance*sin(gTheta[0]);
-	//gCamPos[1] = player1.getPos()[1] + cameraDistance*sin(gTheta[1]);
-	//gCamPos[2] = player1.getPos()[2] - cameraDistance*-cos(gTheta[2]);
 
 	float t[3];
 
 	for (int i = 0; i < 3; i++)
 	{
 		 t[i] = getUnitDirection((camera->position)[0], (camera->position)[1], (camera->position)[2],
-									player1.getPos()[0], player1.getPos()[1], player1.getPos()[2])[i];
+									player1->getPos()[0], player1->getPos()[1], player1->getPos()[2])[i];
 	}
 	
 	
@@ -397,18 +368,18 @@ void display(void)
 	gluLookAt((camera->position)[0], 
 		(camera->position)[1], 
 		(camera->position)[2],
-		player1.getPos()[0],
-		player1.getPos()[1],
-		player1.getPos()[2],
+		player1->getPos()[0],
+		player1->getPos()[1],
+		player1->getPos()[2],
 		0,1,0);
 
 	glColor3f(0.0, 0.0, 1.0);
 
 	/* Draw Player1 onto the screen */
-	player1.draw();
+	player1->draw();
 
 	/* Draws Enemy onto the screen */
-	tempEnemy.draw();
+	tempEnemy->draw();
 	tower->draw();
 
 	displayStats();
@@ -459,9 +430,9 @@ void checkSpellCollision(Character *p, Character *e)
 void idle()
 {
 	getPlayerPosition();
-	checkSpellCollision(&player1, &tempEnemy);
-	player1.update();
-	tempEnemy.update();
+	checkSpellCollision(player1, tempEnemy);
+	player1->update();
+	tempEnemy->update();
 
 	/* Call back display function */
 	glutPostRedisplay();
