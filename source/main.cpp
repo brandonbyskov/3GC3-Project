@@ -670,6 +670,20 @@ float * getUnitDirection(float x1, float y1, float z1, float x2, float y2, float
 	return uD;
 }
 
+void displayStats()
+{
+	string text = "yo bro";
+	glPushMatrix();
+	glRasterPos2i(100, 100);
+	glTranslatef(gCamPos[0], gCamPos[1], gCamPos[2]);
+	glColor3fv(green);
+	for (int i = 0; i < text.length(); i++)
+	{
+		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, (int)text[i]);
+	}
+	glPopMatrix();
+
+}
 
 /* display function - GLUT display callback function
  *		clears the screen, sets the camera position, draws the ground plane and movable box
@@ -680,6 +694,8 @@ void display(void)
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	
 
 	gCamPos[0] = player1.getPos()[0] - cameraDistance*sin(gTheta[0]);
 	gCamPos[1] = player1.getPos()[1] + cameraDistance*sin(gTheta[1]);
@@ -718,6 +734,7 @@ void display(void)
 	/* Draws Enemy onto the screen */
 	tempEnemy.draw();
 
+	displayStats();
 	/* Swap front buffer with back buffer */
 	glutSwapBuffers();
 }
@@ -829,23 +846,6 @@ int main(int argc, char** argv)
 	glutInitWindowPosition(100, 100);
 
 	glutCreateWindow("Terrain");	//creates the window
-
-	//int terrain_size_submenu = glutCreateMenu(adjustTerrainSize);
-	//	glutAddMenuEntry("50", 50);
-	//	glutAddMenuEntry("100", 100);
-	//	glutAddMenuEntry("200", 200);
-	//	glutAddMenuEntry("300", 300);
-	//int faults_submenu = glutCreateMenu(adjustTerrainFaults);
-	//	glutAddMenuEntry("50", 50);
-	//	glutAddMenuEntry("100", 100);
-	//	glutAddMenuEntry("200", 200);
-	//	glutAddMenuEntry("400", 400);
-	//main_id = glutCreateMenu(mainMenu);
-	//	glutAddSubMenu("Terrain Size", terrain_size_submenu);
-	//	glutAddSubMenu("Fault Iterations", faults_submenu);
-	//	glutAddMenuEntry("Toggle Color Map   'C'", 1);
-	//	glutAddMenuEntry("Reset              'R'", 2);
-	//glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
