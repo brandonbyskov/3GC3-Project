@@ -4,6 +4,14 @@ December 2014
 
 controls in terminal window
 
+ Commands
+______________________________________________
+  Quit                              'Q' or ESC
+  Rotate camera:                        Cursor
+  Move Character:                    WASD keys
+  Levitate Character:          Space Bar (' ')
+  Fire Spell                 'G' or Left Click
+
 extra features:
 -alpha blending
 -animated characters

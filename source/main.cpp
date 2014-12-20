@@ -92,7 +92,7 @@ void printInstructions()
 	cout << "  Quit                              'Q' or ESC\n";
 	cout << "  Rotate camera:                        Cursor\n";
 	cout << "  Move Character:                    WASD keys\n";
-	cout << "  Levatate Character:          Space Bar (' ')\n";
+	cout << "  Levatite Character:          Space Bar (' ')\n";
 	cout << "  Fire Spell                 'G' or Left Click\n";
 
 }
