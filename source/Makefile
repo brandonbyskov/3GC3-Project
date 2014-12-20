@@ -2,7 +2,7 @@
 EXE = game
 LDFLAGS = -lGL -lGLU -lglut
 CFLAGS=-g -Wall
-CC=g++
+CC=g++ -std=c++11
 
 #Windows (cygwin)
 ifeq "$(OS)" "Windows_NT"
@@ -43,7 +43,7 @@ LFLAGS =
 LIBS = 
 
 # define the C source files
-SRCS = main.cpp core.cpp character.cpp particle.cpp projectile.cpp enemy.cpp player.cpp
+SRCS = main.cpp core.cpp character.cpp particle.cpp projectile.cpp enemy.cpp player.cpp tower.cpp block.cpp
 
 # define the C object files 
 #

@@ -7,6 +7,8 @@
 extern Core *core;
 
 //temp globals
+
+
 extern float cameraSpeed;
 extern float cameraDistance;
 extern float gCamPos[3];

@@ -17,6 +17,7 @@
 #include "main.h"
 #include "enemy.h"
 #include "player.h"
+#include "tower.h"
 
 
 using namespace std;
@@ -25,7 +26,10 @@ int main_id;
 int terrain_size = 50;
 int terrain_faults = 100;
 
-
+//Tower constants
+const int towerSize = 5;
+const int towerLayers = 30;
+const float blockSize = 2.0;
 
 int gMouseState;
 int gButtonClicked;
@@ -80,119 +84,121 @@ float wood[] = {0.52, 0.37, 0.26};
 
 
 
-/* Platform class - Design for a 6 sided rectangular prism */
-class Platform
-{
-	float origin[3];
+///* Platform class - Design for a 6 sided rectangular prism */
+//class Platform
+//{
+//	float origin[3];
+//
+//	/* Depth, width and height, respectively */
+//	float d;
+//	float w;
+//	float h;
+//
+//	/* Two toned colour of platform */
+//	float colour[3];
+//	float colour2[3];
+//
+//	/* cube - takes an array of 8 vertices, and draws 6 faces
+//	 *  with drawPolygon, making up a box
+//	 */
+//	void cube(float v[8][3])
+//	{
+//		//side
+//		glColor3f(1.0,1.0,0.8);
+//		drawPolygon(0, 3, 2, 1, v);
+//
+//		//side
+//		drawPolygon(1, 0, 4, 5, v);
+//
+//		//top
+//		glColor3f(1.0,1.0,1.0);
+//		drawPolygon(5, 1, 2, 6, v);
+//
+//		glColor3f(1.0,1.0,0.8);
+//		drawPolygon(2, 3, 7, 6, v);
+//		drawPolygon(6, 5, 4, 7, v);
+//		drawPolygon(4, 0, 3, 7, v);
+//	}
+//
+//	/* Draws a side of the cube */
+//	void drawPolygon(int a, int b, int c, int d, float v[8][3])
+//	{
+//		glMaterialfv(GL_FRONT, GL_AMBIENT, colour2);
+//		glMaterialfv(GL_FRONT, GL_DIFFUSE, colour2);
+//		glMaterialfv(GL_FRONT, GL_SPECULAR, colour2);
+//		glMaterialfv(GL_FRONT, GL_SHININESS, colour);
+//
+//		glNormal3f(0.0, 1.0, 0.0);
+//		glBegin(GL_POLYGON);
+//			glVertex3fv(v[a]);
+//			glVertex3fv(v[b]);
+//			glVertex3fv(v[c]);
+//			glVertex3fv(v[d]);
+//		glEnd();
+//	}
+//
+//	public:
+//		/* Constructor - Initializes a platform with specified by the origin coordinates, depth, width and height, respectively*/
+//		Platform(float* o, float _d, float _w, float _h)
+//		{
+//			d = _d;
+//			w = _w;
+//			h = _h;
+//
+//			for (int i = 0; i < 3; i++)
+//			{
+//				origin[i] = o[i];
+//				colour[i] = 1.0;
+//			}
+//			colour2[0] = 1.0; 
+//			colour2[1] = 1.0;
+//			colour2[2] = 0.8;
+//		}
+//
+//		/* Draws the platform using a center origin */
+//		void drawPlatform()
+//		{
+//			float vertices[8][3] = { {origin[0]-w/2, origin[1]-h/2, origin[2]+d/2},
+//									 {origin[0]-w/2, origin[1]+h/2, origin[2]+d/2},
+//									 {origin[0]+w/2, origin[1]+h/2, origin[2]+d/2},
+//									 {origin[0]+w/2, origin[1]-h/2, origin[2]+d/2}, 
+//									 {origin[0]-w/2, origin[1]-h/2, origin[2]-d/2}, 
+//									 {origin[0]-w/2, origin[1]+h/2, origin[2]-d/2}, 
+//									 {origin[0]+w/2, origin[1]+h/2, origin[2]-d/2},
+//									 {origin[0]+w/2, origin[1]-h/2, origin[2]-d/2} };
+//
+//			cube(vertices);
+//		}
+//
+//		/* Returns the origin coordinates of the platform */
+//		float * getOrigin()
+//		{
+//			return origin;
+//		}
+//
+//		/* Returns the depth of the platform */
+//		float getDepth()
+//		{
+//			return d; 
+//		}
+//		
+//		/* Returns the height of the platform */
+//		float getHeight()
+//		{
+//			return h;
+//		}
+//
+//		/* Returns the width of the platform */
+//		float getWidth()
+//		{
+//			return w;
+//		}
+//
+//};
+//
+//vector<Platform> platform;
 
-	/* Depth, width and height, respectively */
-	float d;
-	float w;
-	float h;
 
-	/* Two toned colour of platform */
-	float colour[3];
-	float colour2[3];
-
-	/* cube - takes an array of 8 vertices, and draws 6 faces
-	 *  with drawPolygon, making up a box
-	 */
-	void cube(float v[8][3])
-	{
-		//side
-		glColor3f(1.0,1.0,0.8);
-		drawPolygon(0, 3, 2, 1, v);
-
-		//side
-		drawPolygon(1, 0, 4, 5, v);
-
-		//top
-		glColor3f(1.0,1.0,1.0);
-		drawPolygon(5, 1, 2, 6, v);
-
-		glColor3f(1.0,1.0,0.8);
-		drawPolygon(2, 3, 7, 6, v);
-		drawPolygon(6, 5, 4, 7, v);
-		drawPolygon(4, 0, 3, 7, v);
-	}
-
-	/* Draws a side of the cube */
-	void drawPolygon(int a, int b, int c, int d, float v[8][3])
-	{
-		glMaterialfv(GL_FRONT, GL_AMBIENT, colour2);
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, colour2);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, colour2);
-		glMaterialfv(GL_FRONT, GL_SHININESS, colour);
-
-		glNormal3f(0.0, 1.0, 0.0);
-		glBegin(GL_POLYGON);
-			glVertex3fv(v[a]);
-			glVertex3fv(v[b]);
-			glVertex3fv(v[c]);
-			glVertex3fv(v[d]);
-		glEnd();
-	}
-
-	public:
-		/* Constructor - Initializes a platform with specified by the origin coordinates, depth, width and height, respectively*/
-		Platform(float* o, float _d, float _w, float _h)
-		{
-			d = _d;
-			w = _w;
-			h = _h;
-
-			for (int i = 0; i < 3; i++)
-			{
-				origin[i] = o[i];
-				colour[i] = 1.0;
-			}
-			colour2[0] = 1.0; 
-			colour2[1] = 1.0;
-			colour2[2] = 0.8;
-		}
-
-		/* Draws the platform using a center origin */
-		void drawPlatform()
-		{
-			float vertices[8][3] = { {origin[0]-w/2, origin[1]-h/2, origin[2]+d/2},
-									 {origin[0]-w/2, origin[1]+h/2, origin[2]+d/2},
-									 {origin[0]+w/2, origin[1]+h/2, origin[2]+d/2},
-									 {origin[0]+w/2, origin[1]-h/2, origin[2]+d/2}, 
-									 {origin[0]-w/2, origin[1]-h/2, origin[2]-d/2}, 
-									 {origin[0]-w/2, origin[1]+h/2, origin[2]-d/2}, 
-									 {origin[0]+w/2, origin[1]+h/2, origin[2]-d/2},
-									 {origin[0]+w/2, origin[1]-h/2, origin[2]-d/2} };
-
-			cube(vertices);
-		}
-
-		/* Returns the origin coordinates of the platform */
-		float * getOrigin()
-		{
-			return origin;
-		}
-
-		/* Returns the depth of the platform */
-		float getDepth()
-		{
-			return d; 
-		}
-		
-		/* Returns the height of the platform */
-		float getHeight()
-		{
-			return h;
-		}
-
-		/* Returns the width of the platform */
-		float getWidth()
-		{
-			return w;
-		}
-
-};
-
-vector<Platform> platform;
 
 
 class Terrain {
@@ -349,6 +355,7 @@ public:
 
 Terrain *terrain;
 
+
 /* Set the global origin of the simulation */
 
 void printInstructions()
@@ -393,18 +400,18 @@ void setPlayerLookDirection(float x, float y, float z)
 
 /* Create a particle at particular origin coordinates */
 
-/* Creates a platform at the particular origin coordinates with a specified width and heigth, respectively */
-Platform createPlatform(float* o, float d, float w, float h)
-{
-	float pOrigin[3];
-	for (int i = 0; i < 3; i++)
-	{
-		pOrigin[i] = o[i];
-	}
-
-	Platform p(pOrigin, d, w, h);
-	return p;
-}
+///* Creates a platform at the particular origin coordinates with a specified width and heigth, respectively */
+//Platform createPlatform(float* o, float d, float w, float h)
+//{
+//	float pOrigin[3];
+//	for (int i = 0; i < 3; i++)
+//	{
+//		pOrigin[i] = o[i];
+//	}
+//
+//	Platform p(pOrigin, d, w, h);
+//	return p;
+//}
 
 /* Returns a newly instantiated an player object */
 Player createPlayer(float* o, float m)
@@ -437,6 +444,7 @@ float enemyOrigin[] = {10.0, 20.0, 10.0};
 
 Player player1 = createPlayer(gOrigin, 0.5);
 Enemy tempEnemy = createEnemy(enemyOrigin, 0.5);
+Tower *tower = new Tower(gOrigin,towerSize,towerLayers,blockSize);
 
 void getPlayerPosition()
 {
@@ -496,7 +504,7 @@ void init()
 	printInstructions();
 
 	/* Create a platform */
-	platform.push_back(createPlatform(gOrigin, 15, 15, 1));
+	//platform.push_back(createPlatform(gOrigin, 15, 15, 1));
 	terrain = new Terrain();
 }
 
@@ -694,6 +702,7 @@ void display(void)
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	
 
 	
 
@@ -725,6 +734,7 @@ void display(void)
 
 	//platform.front().drawPlatform();
 	terrain->display();
+	
 
 	glColor3f(0.0, 0.0, 1.0);
 
@@ -733,6 +743,7 @@ void display(void)
 
 	/* Draws Enemy onto the screen */
 	tempEnemy.draw();
+	tower->draw();
 
 	displayStats();
 	/* Swap front buffer with back buffer */
