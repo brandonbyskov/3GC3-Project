@@ -4,7 +4,7 @@
 using namespace std;
 
 Character::Character(float * _pos, float _size) {
-	lifePoints = 3;
+	
 	takingDamage = false;
 	damageDuration = 0;
 	size = _size;
@@ -13,7 +13,7 @@ Character::Character(float * _pos, float _size) {
 	particleInterval = 10;
 
 	spellIntervalCount = 0;
-	spellInterval = 30;
+	spellInterval = 100;
 				
 	for (int i = 0; i < 3; i++)
 	{
@@ -140,6 +140,7 @@ void Character::updateParticles()
 		if (particle[i].getAge() > gMaxParticleAge)
 		{
 			particle.pop_back();
+
 		}
 	}
 }

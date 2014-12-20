@@ -5,6 +5,7 @@
 #include "gllibs.h"
 
 Enemy::Enemy(float* _o, float _size) : Character(_o, _size) {
+	lifePoints = 1;
 }
 
 Enemy::~Enemy() {

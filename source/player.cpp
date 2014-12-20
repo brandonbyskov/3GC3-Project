@@ -6,6 +6,7 @@
 
 Player::Player(float* _o, float _size) : Character(_o, _size)
 {
+	lifePoints = 3;
 	hasHorizontalCollision = false;
 	movingForward = false;
 	movingBackward = false;

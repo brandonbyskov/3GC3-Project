@@ -56,8 +56,8 @@ float gravity = 0.000125f;
 float friction = 0.9;
 float terminalVelocity = 0.5;
 
-int gMaxParticleAge;
-int gMaxSpellAge;
+int gMaxParticleAge = 100;
+int gMaxSpellAge = 100;
 
 /* Speacial Modes */
 bool wireframeMode = true;
@@ -145,8 +145,7 @@ void getPlayerPosition()
 /* Initializes all the variables for the Particle Simulation */
 void init()
 {
-	gMaxParticleAge = 100;
-	gMaxSpellAge = 1000;
+
 	/* Disable Mouse */
 	glutSetCursor(GLUT_CURSOR_NONE);
 
