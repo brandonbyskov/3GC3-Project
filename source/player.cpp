@@ -118,7 +118,7 @@ void Player::move()
 	if (levitating && !falling)
 	{
 		particleInterval = 2;
-		velocity[1] += gravity*5;
+		velocity[1] += gravity;
 		pos[1] += velocity[1];
 	}
 
@@ -194,7 +194,7 @@ void Player::move()
 	if (falling && levitating)
 	{
 		pos[1] -= velocity[1];
-		if (velocity[1] < -0.1 || velocity[1] > 0.1) //limit
+		if (velocity[1] < -0.05 || velocity[1] > 0.05) //limit
 		{
 			velocity[1] *= friction*1.03;
 		}
@@ -211,7 +211,7 @@ void Player::move()
 	if (!falling && !levitating)
 	{
 		pos[1] += velocity[1];
-		if (velocity[1] < -0.1 || velocity[1] > 0.1) //limit
+		if (velocity[1] < -0.05 || velocity[1] > 0.05) //limit
 		{
 			velocity[1] *= friction*1.03;
 		}
@@ -220,6 +220,11 @@ void Player::move()
 			falling = true;
 		}
 		particleInterval = 2;
+	}
+
+	//limit max speed
+	if (fabs(velocity[1])>terminalVelocity) {
+		velocity[1] = copysign(terminalVelocity,velocity[1]);
 	}
 }
 void Player::drawFigure()

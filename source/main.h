@@ -17,6 +17,7 @@ extern float gPlayerPosition[3];
 
 extern float gravity;
 extern float friction;
+extern float terminalVelocity;
 
 extern int gMaxParticleAge;
 extern int gMaxSpellAge;

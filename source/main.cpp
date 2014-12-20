@@ -52,8 +52,9 @@ float gPlayerLookDirection[3];
 float gPlayerPosition[3];
 
 /* Global physics */
-float gravity;
-float friction;
+float gravity = 0.000125f;
+float friction = 0.9;
+float terminalVelocity = 0.5;
 
 int gMaxParticleAge;
 int gMaxSpellAge;
@@ -175,8 +176,7 @@ void init()
 	glutSetCursor(GLUT_CURSOR_NONE);
 
 	/* Initialze physics */
-	gravity = 0.003f;
-	friction = 0.9;
+
 
 	/* Initialize global origin, theta and camera variables */
 	setTheta(1.0, 1.0, 1.0);
@@ -454,34 +454,6 @@ void checkSpellCollision(Character *p, Character *e)
 	}
 }
 
-//void checkCollision(Terrain *t, Player *p)
-//{
-//	float pX = p->getX();
-//	float pY = p->getY();
-//	float pZ = p->getZ();
-//	float pSize = p->getSize();
-//
-//	for (int i = max(0,(int)pX-4); i < min(t->getSize(),(int)pX+4); i++)
-//	{
-//		for (int j = max(0,(int)pZ-4); j < min(t->getSize(),(int)pZ+4); j++)
-//		{
-//			float tX = t->getSize();
-//			float tZ = t->getSize();
-//
-//			if ((pX <= i+1 && pX >= i) && 
-//				(pZ <= j+1 && pZ >= j) &&
-//				pY <= t->getHeight()[i][j])
-//			{
-//				p->collidesVertically(100);
-//				p->setY(t->getHeight()[i][j] + pSize);
-//			}
-//			else
-//			{
-//				//p->drop();
-//			}
-//		}
-//	}
-//}
 
 /* Idle call back function which is run everytime nothing else is called back */
 void idle()
