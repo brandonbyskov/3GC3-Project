@@ -23,13 +23,11 @@
 using namespace std;
 
 int main_id;
-int terrain_size = 50;
-int terrain_faults = 100;
 
 //Tower constants
 const int towerSize = 5;
 const int towerLayers = 30;
-const float blockSize = 2.0;
+const float blockSize = 3.0;
 
 int gMouseState;
 int gButtonClicked;
@@ -83,161 +81,6 @@ float skin[] = {0.96, 0.80, 0.69};
 float wood[] = {0.52, 0.37, 0.26};
 
 
-class Terrain {
-
-	int** heightmap;
-	int size;
-	int maxHeight;
-	int minHeight;
-public:
-
-	Terrain() {
-		size = terrain_size;
-		int fault_iterations = terrain_faults;
-		maxHeight = 0;
-
-		heightmap = new int*[size];
-		for(int i = 0; i < size; i++) {
-			heightmap[i] = new int[size];
-		}
-
-		for(int i = 0;i<size;i++) {
-			for(int j = 0;j<size;j++) {
-				heightmap[i][j] = 0;
-			}
-		}
-		this->build(fault_iterations);
-
-		for(int i = 0;i<size;i++) {
-			for(int j = 0;j<size;j++) {
-				maxHeight = max(heightmap[i][j], maxHeight);
-				minHeight = min(heightmap[i][j], minHeight);
-			}
-		}
-	};
-
-	//faults the terrain once
-	void fault() {
-		float v = rand();
-		float a = sin(v);
-		float b = cos(v);
-		float d = sqrt(2*size*size);
-		// rand() / RAND_MAX gives a random number between 0 and 1.
-		// therefore c will be a random number between -d/2 and d/2
-		float c = ((double)rand() / RAND_MAX) * d - d/2;
-
-		//int displacement = (((double)rand() / RAND_MAX)>.5)?1:-1;
-
-
-		for(int i = 0;i<size;i++) {
-			for(int j = 0;j<size;j++) {
-				if (a*i + b*j - c > 0) {
-					(heightmap[i][j]) += 1;
-				}
-				else {
-					(heightmap[i][j]) -= 1;
-				}
-			}
-		}
-		
-	}
-
-	//builds a terrain by fualting it several times
-	void build(int iterations) {
-		if (iterations > 0) {
-			for (int i = 1; i<=iterations;i++) {
-				this->fault();
-			}
-		}
-	}
-
-	//resets the array using global size and fault parameters.
-	void reset()
-	{
-		//delete old heightmap
-		for (int i=0; i < size; i++)
-		{
-			delete [] heightmap[i];
-		}
-		delete [] heightmap;
-
-		size = terrain_size;
-		int fault_iterations = terrain_faults;
-
-		heightmap = new int*[size];
-		for(int i = 0; i < size; i++) {
-			heightmap[i] = new int[size];
-		}
-
-		for(int i = 0;i<size;i++) {
-			for(int j = 0;j<size;j++) {
-				heightmap[i][j] = 0;
-			}
-		}
-		this->build(fault_iterations);
-	}
-
-
-	int ** getHeight()
-	{
-		return heightmap;
-	}
-
-	int getSize()
-	{
-		return size;
-	}
-
-	int getX(float _x)
-	{
-		
-	}
-
-
-	//displays the terrain
-	void display() {
-		
-		if (wireframeMode)
-		{
-			glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-		}
-		for(int i = 0;i<size-1;i++) {
-			for(int j = 0;j<size-1;j++) {
-				glBegin(GL_POLYGON);
-					float avgHeight;
-					if (colorMapMode)
-					{
-						avgHeight = heightmap[i][j] + heightmap[i+1][j] + heightmap[i+1][j+1] + heightmap[i][j+1];
-
-						glColor3f(.5*avgHeight/(float)maxHeight-minHeight,1-(avgHeight/(float)maxHeight-minHeight),0);
-					}
-					else
-					{
-						glColor3ub(0,255,0);
-					}
-						
-					glMaterialfv(GL_FRONT, GL_AMBIENT, black);
-					glMaterialfv(GL_FRONT, GL_DIFFUSE, black);
-					glMaterialfv(GL_FRONT, GL_SPECULAR, black);
-					glMaterialfv(GL_FRONT, GL_SHININESS, green);
-
-					glVertex3f(i, heightmap[i][j], j);
-					glVertex3f(i+1, heightmap[i+1][j], j);
-					glVertex3f(i+1, heightmap[i+1][j+1], j+1);
-					glVertex3f(i, heightmap[i][j+1], j+1);
-
-					
-				glEnd();
-			}
-		}
-		glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-	}
-
-};
-
-Terrain *terrain;
-
-
 /* Set the global origin of the simulation */
 
 void printInstructions()
@@ -279,21 +122,6 @@ void setPlayerLookDirection(float x, float y, float z)
 	gPlayerLookDirection[2] = z;
 }
 
-
-/* Create a particle at particular origin coordinates */
-
-///* Creates a platform at the particular origin coordinates with a specified width and heigth, respectively */
-//Platform createPlatform(float* o, float d, float w, float h)
-//{
-//	float pOrigin[3];
-//	for (int i = 0; i < 3; i++)
-//	{
-//		pOrigin[i] = o[i];
-//	}
-//
-//	Platform p(pOrigin, d, w, h);
-//	return p;
-//}
 
 /* Returns a newly instantiated an player object */
 Player createPlayer(float* o, float m)
@@ -385,9 +213,6 @@ void init()
 	/* Print Instructions */
 	printInstructions();
 
-	/* Create a platform */
-	//platform.push_back(createPlatform(gOrigin, 15, 15, 1));
-	terrain = new Terrain();
 }
 
 /* Takes user's keyboard input when they release a key */
@@ -419,22 +244,6 @@ void keyboardUp(unsigned char key, int x, int y)
 }
 void keyboard(unsigned char key, int x, int y)
 {
-	//Wireframe mode
-	if (key == 'f' || key == 'F')
-	{
-		wireframeMode = !wireframeMode;
-	}
-	if (key == 'c' || key == 'C')
-	{
-		colorMapMode = !colorMapMode;
-	}
-
-
-	//Rebuild Terrain
-	if (key == 'r' || key == 'R')
-	{
-		terrain->reset();
-	}
 
 	/* Quit the simulation */
 	if (key =='q' || key == 'Q')
@@ -612,12 +421,6 @@ void display(void)
 		player1.getPos()[2],
 		0,1,0);
 
-	glColor3f(0.2,0.2,0.2);
-
-	//platform.front().drawPlatform();
-	terrain->display();
-	
-
 	glColor3f(0.0, 0.0, 1.0);
 
 	/* Draw Player1 onto the screen */
@@ -670,41 +473,40 @@ void checkSpellCollision(Character *p, Character *e)
 	}
 }
 
-void checkCollision(Terrain *t, Player *p)
-{
-	float pX = p->getX();
-	float pY = p->getY();
-	float pZ = p->getZ();
-	float pSize = p->getSize();
-
-	for (int i = max(0,(int)pX-4); i < min(t->getSize(),(int)pX+4); i++)
-	{
-		for (int j = max(0,(int)pZ-4); j < min(t->getSize(),(int)pZ+4); j++)
-		{
-			float tX = t->getSize();
-			float tZ = t->getSize();
-
-			if ((pX <= i+1 && pX >= i) && 
-				(pZ <= j+1 && pZ >= j) &&
-				pY <= t->getHeight()[i][j])
-			{
-				p->collidesVertically(100);
-				p->setY(t->getHeight()[i][j] + pSize);
-			}
-			else
-			{
-				//p->drop();
-			}
-		}
-	}
-}
+//void checkCollision(Terrain *t, Player *p)
+//{
+//	float pX = p->getX();
+//	float pY = p->getY();
+//	float pZ = p->getZ();
+//	float pSize = p->getSize();
+//
+//	for (int i = max(0,(int)pX-4); i < min(t->getSize(),(int)pX+4); i++)
+//	{
+//		for (int j = max(0,(int)pZ-4); j < min(t->getSize(),(int)pZ+4); j++)
+//		{
+//			float tX = t->getSize();
+//			float tZ = t->getSize();
+//
+//			if ((pX <= i+1 && pX >= i) && 
+//				(pZ <= j+1 && pZ >= j) &&
+//				pY <= t->getHeight()[i][j])
+//			{
+//				p->collidesVertically(100);
+//				p->setY(t->getHeight()[i][j] + pSize);
+//			}
+//			else
+//			{
+//				//p->drop();
+//			}
+//		}
+//	}
+//}
 
 /* Idle call back function which is run everytime nothing else is called back */
 void idle()
 {
 	getPlayerPosition();
 	checkSpellCollision(&player1, &tempEnemy);
-	checkCollision(terrain, &player1);
 	player1.update();
 	tempEnemy.update();
 
@@ -713,18 +515,7 @@ void idle()
 }
 void mainMenu(int value)
 {
-	if (value == 1)
-		colorMapMode = !colorMapMode;
-	if (value == 2)
-		terrain->reset();
-}
 
-void adjustTerrainSize(int value){
-	terrain_size = value;
-}
-
-void adjustTerrainFaults(int value){
-	terrain_faults = value;
 }
 
 /* main function - program entry point */
@@ -738,7 +529,7 @@ int main(int argc, char** argv)
 	glutInitWindowSize(800,800);
 	glutInitWindowPosition(100, 100);
 
-	glutCreateWindow("Terrain");	//creates the window
+	glutCreateWindow("Tower Game");	//creates the window
 
 	glutKeyboardFunc(keyboard);
 	glutKeyboardUpFunc(keyboardUp);
